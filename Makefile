@@ -12,8 +12,8 @@ LINK    = gcc
 LIBS    =
 LIBS    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lySTR -lyFONT
 LIBD    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lySTR -lyFONT -lyLOG
-OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_node.os ${BASE}_draw.os
-OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_node.o  ${BASE}_draw.o
+OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os
+OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o
 
 #*---(make variables)-----------------*#
 COPY    = cp -f  
@@ -46,6 +46,11 @@ ${BASE}_prog.o     : ${BASE}.h    ${BASE}_prog.c
 	${COMP}    ${BASE}_prog.c                        ${INC}
 	${STRIP}   ${BASE}_prog.c    > ${BASE}_prog.cs
 	${COMP}    ${BASE}_prog.cs  -o ${BASE}_prog.os   ${INC}
+
+${BASE}_file.o     : ${BASE}.h    ${BASE}_file.c
+	${COMP}    ${BASE}_file.c                        ${INC}
+	${STRIP}   ${BASE}_file.c    > ${BASE}_file.cs
+	${COMP}    ${BASE}_file.cs  -o ${BASE}_file.os   ${INC}
 
 ${BASE}_node.o     : ${BASE}.h    ${BASE}_node.c
 	${COMP}    ${BASE}_node.c                        ${INC}

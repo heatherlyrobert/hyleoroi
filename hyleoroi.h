@@ -243,6 +243,9 @@
 #include    <string.h>       /* C_ANSI : printf, snprintf, fgets, fopen, ...  */
 #include    <stdlib.h>       /* C_ANSI : exit, system, ...                    */
 
+#include    <fcntl.h>             /* clibc standard file control              */
+#include    <termios.h>           /* clibc standard terminal control          */
+
 #include    <math.h>
 #include    <sys/time.h>
 #include    <unistd.h>
@@ -256,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5a"
-#define     VER_TXT   "initial push into github"
+#define     VER_NUM   "v0.5b"
+#define     VER_TXT   "basic file read for more complex format (FULL)"
 
 
 
@@ -349,6 +352,8 @@ typedef     struct     cGLOBAL      tGLOBAL;
 struct cGLOBAL {
    /*---(window)-------------------------*/
    char        title       [100];      /* window title                        */
+   char        source      [100];      /* source program for data             */
+   char        report      [100];      /* source context for data             */
    int         win_h;                  /* window height                       */
    int         win_w;                  /* window width                        */
    int         tex_h;                  /* texture height                      */
@@ -520,6 +525,8 @@ char        TEX_show           (void);
 char        FONT_load          (void);
 char        FONT_unload        (void);
 
+char        FILE_check         (void);
+char        FILE_main          (void);
 
 char        NODE_init          (void);
 tNODE*      NODE_append        (tNODE *a_owner);

@@ -51,7 +51,13 @@ main               (int argc, char *argv[])
       return -1;
    }
    /*---(node setup)---------------------*/
-   NODE_read    (0, h_node);
+   /*> rc = NODE_read    (0, h_node);                                                 <*/
+   rc = FILE_main    ();
+   if (rc < 0) return rc;
+
+   /*> return 0;                                                                      <*/
+
+
    NODE_reroot  ();
    if (my.noempty == 'y' && my.empty != NULL) {
       h_node->size   -= my.empty->size;

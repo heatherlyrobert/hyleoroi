@@ -746,12 +746,16 @@ TEX_show           (void)
       glTranslatef(   0.0,   15.0,    0.0);
       if (my.ghost   == 'y')  yFONT_print (txf_bg, 10, YF_TOPRIG, "show ghosts");
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "no ghosts");
+      glTranslatef(   0.0,   15.0,    0.0);
+      sprintf (t, "nodes %d", n_node);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
    } glPopMatrix();
    glPushMatrix(); {
       DRAW_fgcolor ();
       glTranslatef( 345.0,  345.0,  200.0);
-      sprintf (t, "nodes %d", n_node);
-      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
+      glTranslatef(   0.0,  -20.0,    0.0);
+      yFONT_print (txf_bg, 14, YF_TOPRIG, my.source);
    } glPopMatrix();
    /*> for (x = -1200; x <= 600; x += 100) {                                          <* 
     *>    for (y = -1200; y <= 600; y += 100) {                                       <* 

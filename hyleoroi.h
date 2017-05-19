@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5c"
-#define     VER_TXT   "NODE_level added to fix any level numbering issues"
+#define     VER_NUM   "v0.5d"
+#define     VER_TXT   "clean up non-node titles and labels around screen"
 
 
 

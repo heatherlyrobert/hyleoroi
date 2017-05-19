@@ -719,7 +719,10 @@ TEX_show           (void)
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi");
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree visualization");
-      glTranslatef(   0.0,  -14.0,    0);
+      glTranslatef(  30.0,  -18.0,    0);
+      sprintf (t, "[%s]", VER_NUM);
+      yFONT_print (txf_bg, 10, YF_TOPLEF, t);
+      glTranslatef( -30.0,    0.0,    0);
       glRotatef(-90.0, 0.0, 0.0, 1.0);
       glTranslatef(   2.0,   10.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, my.tdesc);
@@ -738,24 +741,24 @@ TEX_show           (void)
    glPushMatrix(); {
       DRAW_fgcolor ();
       glTranslatef( 345.0, -335.0,  200.0);
-      sprintf (t, "max depth %d", my.max_depth);
-      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
-      glTranslatef(   0.0,   15.0,    0.0);
       if (my.noempty == 'y')  yFONT_print (txf_bg, 10, YF_TOPRIG, "no empty");
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "show empty");
       glTranslatef(   0.0,   15.0,    0.0);
       if (my.ghost   == 'y')  yFONT_print (txf_bg, 10, YF_TOPRIG, "show ghosts");
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "no ghosts");
-      glTranslatef(   0.0,   15.0,    0.0);
-      sprintf (t, "nodes %d", n_node);
-      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
    } glPopMatrix();
    glPushMatrix(); {
       DRAW_fgcolor ();
       glTranslatef( 345.0,  345.0,  200.0);
       yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
-      glTranslatef(   0.0,  -20.0,    0.0);
+      glTranslatef(   0.0,  -14.0,    0.0);
       yFONT_print (txf_bg, 14, YF_TOPRIG, my.source);
+      glTranslatef(   0.0,  -20.0,    0.0);
+      sprintf (t, "nodes %d", n_node);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
+      glTranslatef(   0.0,  -14.0,    0.0);
+      sprintf (t, "max depth %d", my.max_depth);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
    } glPopMatrix();
    /*> for (x = -1200; x <= 600; x += 100) {                                          <* 
     *>    for (y = -1200; y <= 600; y += 100) {                                       <* 

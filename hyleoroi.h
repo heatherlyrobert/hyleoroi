@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5b"
-#define     VER_TXT   "basic file read for more complex format (FULL)"
+#define     VER_NUM   "v0.5c"
+#define     VER_TXT   "NODE_level added to fix any level numbering issues"
 
 
 
@@ -533,8 +533,10 @@ tNODE*      NODE_append        (tNODE *a_owner);
 char        NODE_wipe          (tNODE *a_node);
 char        NODE_read          (int a_level, tNODE *a_owner);
 char        NODE_process       (int a_level, tNODE *a_first);
-char        NODE_list          (tNODE *a_parent, char a_recurse );
+char        NODE_dump          (int a_level, tNODE *a_parent, char a_recurse );
 char        NODE_reroot        (void);
+char        NODE_level         (int a_level, tNODE *a_parent);
+char        NODE_levelall      (void);
 
 
 

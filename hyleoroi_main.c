@@ -59,12 +59,17 @@ main               (int argc, char *argv[])
 
 
    NODE_reroot  ();
+
+
    if (my.noempty == 'y' && my.empty != NULL) {
       h_node->size   -= my.empty->size;
       my.empty->size  = 0;
    }
-   NODE_process (0, h_node);
-   OPT_PRINT  NODE_list    (h_node, 'y');
+   NODE_levelall ();
+   NODE_process  (0, h_node);
+   NODE_dump     (0, h_node, 'y');
+
+
    /*---(drawing setup)------------------*/
    TEX_draw     ();
    DRAW_resize  (my.win_w, my.win_h);

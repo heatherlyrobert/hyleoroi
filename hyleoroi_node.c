@@ -127,16 +127,16 @@ NODE_wipe          (
 static int         s_count     = 0;      /* count of listed nodes */
 
 char         /*--: show a nodes details ------------------[ leaf   [ ------ ]-*/
-NODE_show          (tNODE *a_node)
+NODE_show          (int a_level, tNODE *a_node)
 {
    int         i           =    0;          /* generic iterator -- fields     */
    char        x_indent    [100] = "";
    char        x_print     [150] = "";
    if (a_node == NULL) return  -11;
-   for (i = 0; i < a_node->level; ++i)  strcat (x_indent, "   ");
+   for (i = 0; i < a_level; ++i)  strcat (x_indent, "   ");
    if ((s_count %  5) == 0)  printf ("\n");
    if ((s_count % 25) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n\n");
-   sprintf (x_print, "%s%s", x_indent, a_node->name);
+   sprintf (x_print, "%02d.%02d.%s%s", a_level, a_node->level, x_indent, a_node->name);
    printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f\n",
          x_print      ,
          a_node->size , a_node->size , a_node->beg  ,
@@ -145,12 +145,17 @@ NODE_show          (tNODE *a_node)
    return 0;
 }
 
-char         /*--: print a report of nodes ---------------[ leaf   [ ------ ]-*/
-NODE_list          (
-      /*---(formal parameters)+-------------+---------------------------------*/
-      tNODE     *a_parent     ,             /* parent node                    */
-      char       a_recurse    )             /* should it recurse              */
-{  /*---(local variables)--+-----------+-*/
+char         /*-> fix level indicators on nodes ----------[ ------ [ ------ ]-*/
+NODE_levelall      (void)
+{
+   NODE_level (0, h_node);
+   return 0;
+}
+
+char         /*-> fix level indicators on nodes ----------[ leaf   [ ------ ]-*/
+NODE_level         (int a_level, tNODE *a_parent)
+{
+   /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;          /* return code for errors         */
    tNODE      *x_curr      = NULL;
    /*---(header)-------------------------*/
@@ -168,12 +173,48 @@ NODE_list          (
       return 0;
    }
    /*---(prepare)------------------------*/
-   if (a_parent == h_node) NODE_show (a_parent);
    x_curr = a_parent->sib_head;
    /*---(show children)------------------*/
    while (x_curr != NULL) {
-      NODE_show (x_curr);
-      if (a_recurse == 'y')  NODE_list (x_curr, a_recurse);
+      NODE_level (a_level + 1, x_curr);
+      x_curr = x_curr->sib_next;
+   }
+   /*---(complete)-------------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--: print a report of nodes ---------------[ leaf   [ ------ ]-*/
+NODE_dump          (
+      /*---(formal parameters)+-------------+---------------------------------*/
+      int        a_level      ,
+      tNODE     *a_parent     ,             /* parent node                    */
+      char       a_recurse    )             /* should it recurse              */
+{  /*---(local variables)--+-----------+-*/
+   char        rce         =  -10;          /* return code for errors         */
+   tNODE      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_point   ("a_parent"  , a_parent);
+   /*---(defense)------------------------*/
+   --rce;  if (a_parent == NULL) {
+      DEBUG_INPT   yLOG_warn    ("a_parent"       ,  "can not be NULL");
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   a_parent->level = a_level;
+   --rce;  if (a_parent->nchild == 0) {
+      DEBUG_INPT   yLOG_info    ("nchild"   ,  "no children to process");
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
+   /*---(prepare)------------------------*/
+   if (a_parent == h_node) NODE_show (a_level, a_parent);
+   x_curr = a_parent->sib_head;
+   /*---(show children)------------------*/
+   while (x_curr != NULL) {
+      NODE_show (a_level + 1, x_curr);
+      if (a_recurse == 'y')  NODE_dump (a_level + 1, x_curr, a_recurse);
       x_curr = x_curr->sib_next;
    }
    /*---(complete)-------------------------*/

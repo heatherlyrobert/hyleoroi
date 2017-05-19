@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5d"
-#define     VER_TXT   "clean up non-node titles and labels around screen"
+#define     VER_NUM   "v0.5e"
+#define     VER_TXT   "broke up drawing code into clean functions"
 
 
 
@@ -506,13 +506,16 @@ char        PROG_testloud      (void);
 char        DRAW_globals       (void);
 char        DRAW_init          (void);
 char        PROG_event         (void);
-char        DRAW_arc           (tNODE *a_node, char a_type);
-char        DRAW_wedge         (tNODE *a_curr);
+char        DRAW__radial_vals  (tNODE *a_node);
+char        DRAW__radial_empty (tNODE *a_node, char a_type);
+char        DRAW__radial_full  (tNODE *a_curr);
 char        DRAW_node          (int a_level, tNODE *a_curr, char a_style);
 char        DRAW_level         (int a_level, tNODE *a_first, char a_recurse);
 char        DRAW_resize        (uint a_w, uint a_h);
-char        DRAW_fgcolor       ();
-char        DRAW_bgcolor       ();
+/*---(oolors)---------------*/
+char        DRAW__color_fore     ();
+char        DRAW__color_back     ();
+char        DRAW__color_node     (tNODE *a_node);
 /*---(texture)--------------*/
 char        TEX_free           (void);
 char        TEX_create         (void);

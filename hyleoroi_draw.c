@@ -152,7 +152,7 @@ DRAW_init          (void)
    yLOG_senter  (__FUNCTION__);
    /*---(color)--------------------------*/
    yLOG_snote   ("color");
-   DRAW_bgcolor  ();
+   DRAW__color_back  ();
    glClearDepth  (1.0f);
    /*---(textures)-----------------------*/
    yLOG_snote   ("texture");
@@ -183,6 +183,44 @@ DRAW_init          (void)
    yLOG_sexit   (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                   heatherly font handling                    ----===*/
+/*====================------------------------------------====================*/
+static void      o___FONTS___________________o (void) {;}
+
+char
+FONT_load          (void)
+{
+   txf_sm = yFONT_load (face_sm);
+   if (txf_sm < 0) {
+      fprintf(stderr, "Problem loading %s\n", face_sm);
+      exit(1);
+   }
+   txf_bg = yFONT_load (face_bg);
+   if (txf_bg < 0) {
+      fprintf(stderr, "Problem loading %s\n", face_bg);
+      exit(1);
+   }
+   return 0;
+}
+
+char
+FONT_unload        (void)
+{
+   yFONT_free (txf_sm);
+   yFONT_free (txf_bg);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      texture drawing                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___TEXTURE_________________o (void) {;}
 
 char         /*===[[ create texture for drawing ]]========[ leaf   [ ------ ]=*/
 TEX_create         (void)
@@ -245,40 +283,9 @@ TEX_free           (void)
 
 
 /*====================------------------------------------====================*/
-/*===----                   heatherly font handling                    ----===*/
+/*===----                        color setting                         ----===*/
 /*====================------------------------------------====================*/
-static void      o___FONTS___________________o (void) {;}
-
-char
-FONT_load          (void)
-{
-   txf_sm = yFONT_load (face_sm);
-   if (txf_sm < 0) {
-      fprintf(stderr, "Problem loading %s\n", face_sm);
-      exit(1);
-   }
-   txf_bg = yFONT_load (face_bg);
-   if (txf_bg < 0) {
-      fprintf(stderr, "Problem loading %s\n", face_bg);
-      exit(1);
-   }
-   return 0;
-}
-
-char
-FONT_unload        (void)
-{
-   yFONT_free (txf_sm);
-   yFONT_free (txf_bg);
-   return 0;
-}
-
-
-
-/*====================------------------------------------====================*/
-/*===----                      texture drawing                         ----===*/
-/*====================------------------------------------====================*/
-static void      o___TEXTURE_________________o (void) {;}
+static void      o___COLORS__________________o (void) {;}
 
 /*> float       s_rstart    = 25.0;                                                   <* 
  *> float       s_rinc      = 90.0;                                                   <*/
@@ -287,7 +294,7 @@ float       s_rinc      = 180.0;
 float       s_explode   =   1.1;
 
 char         /*===[[ set the foreground color ]]==========[ leaf   [ ------ ]=*/
-DRAW_fgcolor       ()
+DRAW__color_fore   ()
 {
    switch (my.scheme) {
    case  'w' :
@@ -303,7 +310,7 @@ DRAW_fgcolor       ()
 }
 
 char         /*===[[ set the background color ]]==========[ leaf   [ ------ ]=*/
-DRAW_bgcolor       ()
+DRAW__color_back   ()
 {
    switch (my.scheme) {
    case  'w' : glClearColor  (1.0f, 1.0f, 1.0f, 1.0f);   /* white */
@@ -323,39 +330,95 @@ DRAW_bgcolor       ()
 }
 
 char         /*--: set the node color --------------------[ leaf   [ ------ ]-*/
-DRAW_nodecolor     (tNODE *a_node)
+DRAW__color_node     (tNODE *a_node)
 {
+   glColor4f (colors [a_node->color].red, colors [a_node->color].grn, colors [a_node->color].blu, 1.00);
+   return 0;
 }
 
-char         /*--: draw a node arc -----------------------[ leaf   [ ------ ]-*/
-DRAW_arc           (tNODE *a_node, char a_type)
+char         /*--: set the node color --------------------[ leaf   [ ------ ]-*/
+DRAW__color_text     (tNODE *a_node, char a_style)
 {
-   /*---(local variables)--+-----------+-*/
-   int         r_far       = 0.0;           /* radius of outer side           */
-   int         d_beg       = 0.0;           /* degree of starting edge        */
-   int         d_end       = 0.0;           /* degree of ending edge          */
-   float       x           = 0.0;           /* x_coordinate                   */
-   float       y           = 0.0;           /* y_coordinate                   */
-   int         i           =   0;           /* loop iterator -- deg tenths    */
+   if (a_style == 'h')
+      glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
+   else if (colors [a_node->color].bri < 0.8)    /* was 1.5  */
+      glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
+   else  
+      glColor4f   (0.0f, 0.0f, 0.0f, 1.0f);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                        radial shapes                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___RADIAL__________________o (void) {;}
+
+static int   s_beg      =    0;     /* horizontal beginning for shape   */
+static float s_cen      =  0.0;     /* horizontal placement for text    */
+static int   s_end      =    0;     /* horizontal ending    for shape   */
+static int   s_top      =    0;     /* vertical   beginning for shape   */
+static float s_mid      =  0.0;     /* vertical   placement for text    */
+static int   s_bot      =    0;     /* vertical   ending    for shape   */
+
+char         /*-> establish drawing outline --------------[ leaf   [ ------ ]-*/
+DRAW__radial_vals    (tNODE *a_node)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
-   if (a_node == NULL) {
-      DEBUG_GRAF   yLOG_note    ("a_node null");
-      DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-      return -1;
+   --rce;  if (a_node == NULL) {
+      DEBUG_GRAF   yLOG_snote   ("a_node null");
+      DEBUG_GRAF   yLOG_sexitr  (__FUNCTION__, rce);
+      return rce;
    }
-   /*---(prepare)------------------------*/
-   r_far  = my.thick [a_node->level];
-   d_beg  = a_node->beg * 10;
-   d_end  = a_node->end * 10;
-   DEBUG_GRAF   yLOG_svalue  ("far", r_far);
-   DEBUG_GRAF   yLOG_svalue  ("beg", d_beg);
-   DEBUG_GRAF   yLOG_svalue  ("end", d_beg);
+   /*---(set node values)----------------*/
+   s_beg   = 0;
+   s_end   = my.thick [a_node->level];
+   s_top   = a_node->beg * 10;
+   s_bot   = a_node->end * 10;
+   /*---(text placement)-----------------*/
+   s_mid   = ((float) s_top / 10.0) + ((float) (s_bot - s_top)) / (2.0 * 10.0);
+   if (a_node->level == 0)  s_mid   =  0.0;
+   else                     s_mid   = -(s_mid) + 90.0;
+   if (a_node->level == 0)  s_cen   =  0.0;
+   else                     s_cen   = my.thick [a_node->level - 1] + 10.0;
+   /*---(report)-------------------------*/
+   DEBUG_GRAF   yLOG_svalue  ("s_beg/in"  , s_beg);
+   DEBUG_GRAF   yLOG_svalue  ("s_end/out" , s_end);
+   DEBUG_GRAF   yLOG_svalue  ("s_top/beg" , s_top);
+   DEBUG_GRAF   yLOG_svalue  ("s_bot/end" , s_bot);
+   DEBUG_GRAF   yLOG_complex ("s_mid"     , "%8.3f", s_mid);
+   DEBUG_GRAF   yLOG_complex ("s_cen"     , "%8.3f", s_cen);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*-> draw an outline only -------------------[ ------ [ ------ ]-*/
+DRAW__radial_empty   (tNODE *a_node, char a_type)
+{
+   /*---(local variables)--+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   float       x           =  0.0;          /* x_coordinate                   */
+   float       y           =  0.0;          /* y_coordinate                   */
+   int         i           =    0;          /* loop iterator -- deg tenths    */
+   /*---(header)-------------------------*/
+   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
+   /*---(set values)---------------------*/
+   rc = DRAW__radial_vals  (a_node);
+   --rce;  if (rc < 0) {
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(set defaults)-------------------*/
    if (a_type == 's') {
       glLineWidth (my.space);
-      DRAW_bgcolor ();
+      DRAW__color_back ();
    } else {
       glLineWidth (1);
       glColor4f ( 0.25,  0.25, 0.25, 1.00);
@@ -364,22 +427,130 @@ DRAW_arc           (tNODE *a_node, char a_type)
    glBegin (GL_LINES); {
       /*---(curved outer)----------------*/
       DEBUG_GRAF   yLOG_snote   ("outer curve");
-      for (i = d_beg; i <= d_end; i +=  5) {
-         x   = r_far  * my_sin [i];
-         y   = r_far  * my_cos [i];
+      for (i = s_top; i <= s_bot; i +=  5) {
+         x   = s_end  * my_sin [i];
+         y   = s_end  * my_cos [i];
          /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);      <*/
          glVertex3f ( x, y, 0.0f);
       }
       /*---(final point)-----------------*/
-      x   = r_far  * my_sin [d_end];
-      y   = r_far  * my_cos [d_end];
+      x   = s_end  * my_sin [s_bot];
+      y   = s_end  * my_cos [s_bot];
       /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);         <*/
       glVertex3f ( x, y, 0.0f);
+   } glEnd();
+   /*---(complete)----------------------*/
+   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
+DRAW__radial_full    (tNODE *a_node)
+{
+   /*---(local variables)--+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   float       x           = 0.0;           /* x_coordinate                   */
+   float       y           = 0.0;           /* y_coordinate                   */
+   int         i           =   0;           /* loop iterator -- deg tenths    */
+   /*---(header)-------------------------*/
+   DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
+   /*---(set values)---------------------*/
+   rc = DRAW__radial_vals  (a_node);
+   --rce;  if (rc < 0) {
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(draw)---------------------------*/
+   DRAW__color_node  (a_node);
+   glBegin (GL_POLYGON); {
+      /*---(set level)-------------------*/
+      glTranslatef ( 0.0,  0.0, - (a_node->level * 20));
+      /*---(first side)------------------*/
+      DEBUG_GRAF   yLOG_snote   ("first side");
+      glVertex3f ( 0, 0, 0.0f);
+      x   = s_end  * my_sin [s_top];
+      y   = s_end  * my_cos [s_top];
+      /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);         <*/
+      glVertex3f ( x, y, 0.0f);
+      /*---(curved outer)----------------*/
+      DEBUG_GRAF   yLOG_snote   ("outer curve");
+      for (i = s_top; i <= s_bot; i += 50) {
+         x   = s_end  * my_sin [i];
+         y   = s_end  * my_cos [i];
+         /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);      <*/
+         glVertex3f ( x, y, 0.0f);
+      }
+      /*---(second side)-----------------*/
+      DEBUG_GRAF   yLOG_snote   ("second side");
+      x   = s_end  * my_sin [s_bot];
+      y   = s_end  * my_cos [s_bot];
+      /*> DEBUG_GRAF   yLOG_("coord"     , "x=%8.3f, y=%8.3f", x, y);         <*/
+      glVertex3f ( x, y, 0.0f);
+      /*---(back to home)----------------*/
+      glVertex3f ( 0, 0, 0.0f);
+      /*---(done)------------------------*/
    } glEnd();
    /*---(complete)----------------------*/
    DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
+
+char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
+DRAW__radial_text    (tNODE *a_node, char a_style)
+{
+   /*---(local variables)--+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_text      [100] = "";
+   /*---(header)-------------------------*/
+   DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
+   /*---(defense)------------------------*/
+   if      (a_node->level  > 7  ) {
+      if   (a_node->width <= 1.0)   return  rce;
+   }
+   else if (a_node->level  > 4  ) {
+      if   (a_node->width <= 1.5)   return  rce;
+   }
+   else if (a_node->level <= 4  ) {
+      if   (a_node->width <= 2.0)   return  rce;
+   }
+   /*---(draw text)----------------------*/
+   glPushMatrix(); {
+      DRAW__color_text   (a_node, a_style);
+      glRotatef   (s_mid, 0.0, 0.0, 1.0);
+      glTranslatef(s_cen, 0.0, 0.0);
+      if (my.hints == 'y') { 
+         glTranslatef(-s_cen, 0.0, 0.0);
+         glRotatef   (-2.0, 0.0, 0.0, 1.0);
+         glTranslatef(s_cen, 0.0, 0.0);
+         yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->label);
+         glTranslatef(-s_cen, 0.0, 0.0);
+         /*> glRotatef   (1.0 + (6.0 - a_node->level) * 1.0, 0.0, 0.0, 1.0);    <*/
+         glRotatef   (+6.0 - (a_node->level * 0.8), 0.0, 0.0, 1.0);
+         glTranslatef(s_cen, 0.0, 0.0);
+         yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->hint);
+         /*> sprintf (x_text, "%s.%s", a_node->hint, a_node->label);            <* 
+          *> yFONT_print (txf_bg, 12, YF_MIDLEF, x_text);                       <*/
+      } else {
+         if (a_node->level == 0)
+            yFONT_print (txf_bg, my.point, YF_MIDCEN, a_node->name );
+         else 
+            if (my.type   == 'm') yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->desc);
+            else                  yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->name);
+      }
+   } glPopMatrix();
+   /*---(complete)----------------------*/
+   DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         block shapes                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___BLOCKS__________________o (void) {;}
 
 char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
 DRAW_block         (tNODE *a_node)
@@ -440,65 +611,12 @@ DRAW_block         (tNODE *a_node)
    return 0;
 }
 
-char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
-DRAW_wedge         (tNODE *a_node)
-{
-   /*---(local variables)--+-----------+-*/
-   int         r_far       = 0.0;           /* radius of outer side           */
-   int         d_beg       = 0.0;           /* degree of starting edge        */
-   int         d_end       = 0.0;           /* degree of ending edge          */
-   float       x           = 0.0;           /* x_coordinate                   */
-   float       y           = 0.0;           /* y_coordinate                   */
-   int         i           =   0;           /* loop iterator -- deg tenths    */
-   /*---(header)-------------------------*/
-   DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
-   /*---(defense)------------------------*/
-   if (a_node == NULL) {
-      DEBUG_GRAF   yLOG_note    ("a_node null");
-      DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-      return -1;
-   }
-   /*---(prepare)------------------------*/
-   r_far  = my.thick [a_node->level];
-   d_beg  = a_node->beg * 10;
-   d_end  = a_node->end * 10;
-   DEBUG_GRAF   yLOG_svalue  ("far", r_far);
-   DEBUG_GRAF   yLOG_svalue  ("beg", d_beg);
-   DEBUG_GRAF   yLOG_svalue  ("end", d_end);
-   /*---(draw)---------------------------*/
-   glColor4f (colors [a_node->color]. red,colors [a_node->color].grn, colors [a_node->color].blu, 1.00);
-   glBegin (GL_POLYGON); {
-      /*---(set level)-------------------*/
-      glTranslatef ( 0.0,  0.0, - (a_node->level * 20));
-      /*---(first side)------------------*/
-      DEBUG_GRAF   yLOG_snote   ("first side");
-      glVertex3f ( 0, 0, 0.0f);
-      x   = r_far  * my_sin [d_beg];
-      y   = r_far  * my_cos [d_beg];
-      /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);         <*/
-      glVertex3f ( x, y, 0.0f);
-      /*---(curved outer)----------------*/
-      DEBUG_GRAF   yLOG_snote   ("outer curve");
-      for (i = d_beg; i <= d_end; i += 50) {
-         x   = r_far  * my_sin [i];
-         y   = r_far  * my_cos [i];
-         /*> DEBUG_GRAF   yLOG_complex ("coord"     , "x=%8.3f, y=%8.3f", x, y);      <*/
-         glVertex3f ( x, y, 0.0f);
-      }
-      /*---(second side)-----------------*/
-      DEBUG_GRAF   yLOG_snote   ("second side");
-      x   = r_far  * my_sin [d_end];
-      y   = r_far  * my_cos [d_end];
-      /*> DEBUG_GRAF   yLOG_("coord"     , "x=%8.3f, y=%8.3f", x, y);         <*/
-      glVertex3f ( x, y, 0.0f);
-      /*---(back to home)----------------*/
-      glVertex3f ( 0, 0, 0.0f);
-      /*---(done)------------------------*/
-   } glEnd();
-   /*---(complete)----------------------*/
-   DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
-   return 0;
-}
+
+
+/*====================------------------------------------====================*/
+/*===----                       actual drawing                         ----===*/
+/*====================------------------------------------====================*/
+static void      o___DRAWING_________________o (void) {;}
 
 char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
 DRAW_node          (
@@ -512,19 +630,7 @@ DRAW_node          (
     *
     */
    /*---(local variables)--+-----------+-*/
-   int         r_far       = 0.0;           /* radius of outer side           */
-   int         d_beg       = 0.0;           /* degree of starting edge        */
-   int         d_end       = 0.0;           /* degree of ending edge          */
-   int         i           =   0;           /* loop iterator -- deg tenths    */
-   float       x           = 0.0;           /* x_coordinate                   */
-   float       y           = 0.0;           /* y_coordinate                   */
-   float       alpha       = 1.0f;
-   int         x_color     = 0;
-   float       x_ang       = 0.0;
-   float       x_rot       = 0.0;
-   float       x_trans     = 0.0;
    char        x_ghost     = '-';
-   char        x_text      [100] = "";
    /*---(defense)------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    if (a_node == NULL) {
@@ -538,64 +644,18 @@ DRAW_node          (
       DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
       return -1;
    }
-   /*---(prepare)------------------------*/
-   /*> r_far  = s_rstart + (a_level + 1) * s_rinc;                                    <*/
-   r_far  = my.thick [a_level];
-   if (r_far == 0) r_far = my.ring;
-   DEBUG_GRAF   yLOG_value   ("r_far"     , r_far);
-   d_beg  = a_node->beg * 10;
-   DEBUG_GRAF   yLOG_value   ("d_beg"     , d_beg);
-   d_end  = a_node->end * 10;
-   if (d_end == my.full_size)  d_end -= 1;
-   DEBUG_GRAF   yLOG_value   ("d_end"     , d_end);
    /*---(draw)---------------------------*/
    glPushMatrix(); {
       if (my.format == 'b') {
          DRAW_block (a_node);
-      }
-      if (my.format == 'r') {
-         if (x_ghost != 'y')  DRAW_wedge  (a_node);
-         else                 DRAW_arc    (a_node, 'g');
+      } else if (my.format == 'r') {
+         if (x_ghost != 'y')  DRAW__radial_full   (a_node);
+         else                 DRAW__radial_empty  (a_node, 'g');
          if (my.space != 0 && x_ghost != 'y') {
-            if (a_node->nchild > 0)  DRAW_arc    (a_node, 's');
+            if (a_node->nchild > 0)  DRAW__radial_empty (a_node, 's');
          }
          if (a_style != 'w' && a_style != 'o') {
-            if (  (a_node->level  > 7 && a_node->width > 1.0) ||
-                  (a_node->level  > 4 && a_node->width > 1.5) ||
-                  (a_node->level <= 4 && a_node->width > 2.0)) {
-               if (a_style == 'h')                         glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
-               else if (colors [a_node->color].bri < 1.5)  glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
-               else                                        glColor4f   (0.0f, 0.0f, 0.0f, 1.0f);
-               x_rot   = ((float) d_beg / 10.0) + ((float) (d_end - d_beg)) / (2.0 * 10.0);
-               DEBUG_GRAF   yLOG_complex ("x_rot"     , "%8.3f", x_rot);
-               if (a_node->level == 0)  x_rot   =  0.0;
-               else                     x_rot   = -(x_rot) + 90.0;
-               DEBUG_GRAF   yLOG_complex ("x_rot"     , "%8.3f", x_rot);
-               glRotatef   (x_rot, 0.0, 0.0, 1.0);
-               /*> if (a_node->level > 0)  x_trans = (float) r_far - (s_rinc * 0.95);    <*/
-               if (a_node->level > 0)  x_trans = my.thick [a_node->level - 1] + 10.0;
-               DEBUG_GRAF   yLOG_complex ("x_trans"   , "%8.3f", x_trans);
-               glTranslatef(x_trans, 0.0, 0.0);
-               if (my.hints == 'y') { 
-                  glTranslatef(-x_trans, 0.0, 0.0);
-                  glRotatef   (-2.0, 0.0, 0.0, 1.0);
-                  glTranslatef(x_trans, 0.0, 0.0);
-                  yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->label);
-                  glTranslatef(-x_trans, 0.0, 0.0);
-                  /*> glRotatef   (1.0 + (6.0 - a_node->level) * 1.0, 0.0, 0.0, 1.0);    <*/
-                  glRotatef   (+6.0 - (a_node->level * 0.8), 0.0, 0.0, 1.0);
-                  glTranslatef(x_trans, 0.0, 0.0);
-                  yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->hint);
-                  /*> sprintf (x_text, "%s.%s", a_node->hint, a_node->label);            <* 
-                   *> yFONT_print (txf_bg, 12, YF_MIDLEF, x_text);                       <*/
-               } else {
-                  if (a_node->level == 0)
-                     yFONT_print (txf_bg, my.point, YF_MIDCEN, a_node->name );
-                  else 
-                     if (my.type   == 'm') yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->desc);
-                     else                  yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->name );
-               }
-            }
+            DRAW__radial_text (a_node, a_style);
          }
       }
    } glPopMatrix();
@@ -714,7 +774,7 @@ TEX_show           (void)
    glLoadIdentity  ();
    /*---(title)-----------------------------*/
    glPushMatrix(); {
-      DRAW_fgcolor ();
+      DRAW__color_fore ();
       glTranslatef(-345.0,  345.0,  200.0);
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi");
       glTranslatef(   0.0,  -18.0,    0);
@@ -730,7 +790,7 @@ TEX_show           (void)
       yFONT_print (txf_bg, 14, YF_TOPLEF, my.fdesc);
    } glPopMatrix();
    glPushMatrix(); {
-      DRAW_fgcolor ();
+      DRAW__color_fore ();
       glTranslatef(-345.0, -335.0,  200.0);
       sprintf (t, "%d color max-diff palette", n_color);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
@@ -739,7 +799,7 @@ TEX_show           (void)
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
    } glPopMatrix();
    glPushMatrix(); {
-      DRAW_fgcolor ();
+      DRAW__color_fore ();
       glTranslatef( 345.0, -335.0,  200.0);
       if (my.noempty == 'y')  yFONT_print (txf_bg, 10, YF_TOPRIG, "no empty");
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "show empty");
@@ -748,7 +808,7 @@ TEX_show           (void)
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "no ghosts");
    } glPopMatrix();
    glPushMatrix(); {
-      DRAW_fgcolor ();
+      DRAW__color_fore ();
       glTranslatef( 345.0,  345.0,  200.0);
       yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
       glTranslatef(   0.0,  -14.0,    0.0);
@@ -764,7 +824,7 @@ TEX_show           (void)
     *>    for (y = -1200; y <= 600; y += 100) {                                       <* 
     *>       for (z =    0; z <=   0; z += 100) {                                     <* 
     *>          glPushMatrix(); {                                                     <* 
-    *>             DRAW_fgcolor ();                                                   <* 
+    *>             DRAW__color_fore ();                                                   <* 
     *>             sprintf (t, "%3d, %3d", x, y);                                     <* 
     *>             glTranslatef( x, y, z);                                            <* 
     *>             yFONT_print (txf_bg,  8, YF_TOPLEF, t);                            <* 

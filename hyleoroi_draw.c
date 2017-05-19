@@ -588,7 +588,7 @@ DRAW_block         (tNODE *a_node)
    default  : strcpy (t     , a_node->label);   break;
    }
    /*---(draw)---------------------------*/
-   glColor4f (colors [a_node->color]. red,colors [a_node->color].grn, colors [a_node->color].blu, 1.00);
+   /*> glColor4f (colors [a_node->color]. red,colors [a_node->color].grn, colors [a_node->color].blu, 1.00);   <*/
    glBegin (GL_POLYGON); {
       /*---(set level)-------------------*/
       glTranslatef ( 0.0,  0.0, - (a_node->level * 20));
@@ -776,7 +776,7 @@ TEX_show           (void)
    glPushMatrix(); {
       DRAW__color_fore ();
       glTranslatef(-345.0,  345.0,  200.0);
-      yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi");
+      yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi (forest watchers)");
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree visualization");
       glTranslatef(  30.0,  -18.0,    0);
@@ -796,6 +796,9 @@ TEX_show           (void)
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef(   0.0,   15.0,    0.0);
       sprintf (t, "start color %d", my.color_start);
+      yFONT_print (txf_bg, 10, YF_TOPLEF, t);
+      glTranslatef(   0.0,   15.0,    0.0);
+      sprintf (t, "%s", (my.chaos == 'y') ? "chaos" : "normal");
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
    } glPopMatrix();
    glPushMatrix(); {

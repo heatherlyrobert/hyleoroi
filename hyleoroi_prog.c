@@ -264,29 +264,31 @@ PROG_init          (void)
    /*---(begin)--------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---(globals)------------------------*/
-   my.print      =  '-';
-   my.space      =    0;
-   my.explode    =  0.0;
-   my.focus      = NULL;
-   my.scheme     =  'w';
-   my.cutoff     =  2.3;
-   my.chaos      =  '-';
-   my.noempty    =  '-';
-   my.hints      =  '-';
-   my.ring       =  170;
-   my.point      =   24;
+   my.print       =  '-';
+   my.space       =    0;
+   my.explode     =  0.0;
+   my.focus       = NULL;
+   my.scheme      =  'w';
+   my.cutoff      =  2.3;
+   my.chaos       =  '-';
+   my.color_seed  =    1;
+   my.color_start =    0;
+   my.noempty     =  '-';
+   my.hints       =  '-';
+   my.ring        =  170;
+   my.point       =   24;
    for (i = 0; i < MAX_RING; ++i) {
       my.thick [i] = my.ring * (1 + i);
    }
-   my.orig_x     =     0;
-   my.orig_y     =     0;
-   my.full_size  =   360;
-   my.type       = '-';
-   my.format     = 'r';
-   my.ghost      = '-';
-   my.max_depth  =  -1;
-   my.empty      = NULL;
-   my.color      =   0;
+   my.orig_x      =     0;
+   my.orig_y      =     0;
+   my.full_size   =   360;
+   my.type        = '-';
+   my.format      = 'r';
+   my.ghost       = '-';
+   my.max_depth   =  -1;
+   my.empty       = NULL;
+   my.color       =   0;
    /*---(default run-time options)-------*/
    DEBUG_TOPS   yLOG_note    ("pre-load trig values");
    for (i = 0; i < 4000; ++i) {
@@ -386,7 +388,11 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   srand (time(NULL));
+   if (my.color_start == 0)  my.color_seed  = my.color_start = 1;
+   else                      my.color_seed  = my.color_start;
+   printf ("color       = %d\n", my.color);
+   printf ("color_start = %d\n", my.color_start);
+   printf ("color_seed  = %d\n", my.color_seed);
    for (i = 0; i < MAX_FORMAT; ++i) {
       if (formats [i].full == 0) break;
       if (formats [i].type   != my.type  )  continue;

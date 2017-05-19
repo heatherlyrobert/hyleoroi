@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5e"
-#define     VER_TXT   "broke up drawing code into clean functions"
+#define     VER_NUM   "v0.5f"
+#define     VER_TXT   "stabilize chaos color schemes and make reapeatable"
 
 
 
@@ -369,8 +369,10 @@ struct cGLOBAL {
    char        ghost;                  /* show child wedges (y/n)             */
    char        radial;                 /* radial format                       */
    int         max_depth;              /* deepest part of tree in use         */
-   int         color_start;            /* next color to use in node           */
+   /*---(colors)-------------------------*/
    int         color;                  /* next color to use in node           */
+   uint        color_start;            /* initial color seed                  */
+   uint        color_seed;             /* seed for random                     */
    /*---(sizing)-------------------------*/
    int         ring;
    int         point;

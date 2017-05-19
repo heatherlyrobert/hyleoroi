@@ -137,10 +137,11 @@ NODE_show          (int a_level, tNODE *a_node)
    if ((s_count %  5) == 0)  printf ("\n");
    if ((s_count % 25) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n\n");
    sprintf (x_print, "%02d.%02d.%s%s", a_level, a_node->level, x_indent, a_node->name);
-   printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f\n",
+   printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f  %3d\n",
          x_print      ,
          a_node->size , a_node->size , a_node->beg  ,
-         a_node->pct  , a_node->width, a_node->end  );
+         a_node->pct  , a_node->width, a_node->end  ,
+         a_node->color);
    ++s_count;
    return 0;
 }

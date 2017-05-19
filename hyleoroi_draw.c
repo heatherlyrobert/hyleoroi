@@ -775,11 +775,11 @@ TEX_show           (void)
    /*---(title)-----------------------------*/
    glPushMatrix(); {
       DRAW__color_fore ();
-      glTranslatef(-345.0,  345.0,  200.0);
+      glTranslatef(-345.0,  348.0,  200.0);
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi (forest watchers)");
       glTranslatef(   0.0,  -18.0,    0);
-      yFONT_print (txf_bg, 10, YF_TOPLEF, "tree visualization");
-      glTranslatef(  30.0,  -18.0,    0);
+      yFONT_print (txf_bg, 10, YF_TOPLEF, "tree structure visualization");
+      glTranslatef(  30.0,  -14.0,    0);
       sprintf (t, "[%s]", VER_NUM);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef( -30.0,    0.0,    0);
@@ -812,11 +812,11 @@ TEX_show           (void)
    } glPopMatrix();
    glPushMatrix(); {
       DRAW__color_fore ();
-      glTranslatef( 345.0,  345.0,  200.0);
+      glTranslatef( 345.0,  348.0,  200.0);
       yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
-      glTranslatef(   0.0,  -14.0,    0.0);
+      glTranslatef(   0.0,  -12.0,    0.0);
       yFONT_print (txf_bg, 14, YF_TOPRIG, my.source);
-      glTranslatef(   0.0,  -20.0,    0.0);
+      glTranslatef(   0.0,  -18.0,    0.0);
       sprintf (t, "nodes %d", n_node);
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);
       glTranslatef(   0.0,  -14.0,    0.0);

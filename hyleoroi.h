@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5f"
-#define     VER_TXT   "stabilize chaos color schemes and make reapeatable"
+#define     VER_NUM   "v0.5g"
+#define     VER_TXT   "huge update to overview and narritive in man file"
 
 
 

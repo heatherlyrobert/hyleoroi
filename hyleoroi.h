@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5h"
-#define     VER_TXT   "fixed color filtering based on color scheme"
+#define     VER_NUM   "v0.5i"
+#define     VER_TXT   "another fix to leveling logic in NODE_levelall"
 
 
 

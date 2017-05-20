@@ -67,7 +67,7 @@ main               (int argc, char *argv[])
    }
    NODE_levelall ();
    NODE_process  (0, h_node);
-   NODE_dump     (0, h_node, 'y');
+   /*> NODE_dump     (0, h_node, 'y');                                                <*/
 
 
 

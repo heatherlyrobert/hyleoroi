@@ -351,12 +351,6 @@ PROG_args          (int argc, char *argv[])
          my.type    = 'd';
       }
       /*---(color options)---------------*/
-      else if (strcmp (a, "--color"             ) == 0) {
-         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
-      }
-      else if (strcmp (a, "--chaos"             ) == 0) {
-         my.chaos          = 'y';
-      }
       else if (strcmp (a, "--white"             ) == 0) {
          my.scheme  = 'w';
          my.cutoff  = 2.3;
@@ -372,6 +366,15 @@ PROG_args          (int argc, char *argv[])
       else if (strcmp (a, "--black"             ) == 0) {
          my.scheme  = 'b';
          my.cutoff  = 0.7;
+      }
+      else if (strcmp (a, "--color"             ) == 0) {
+         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
+      }
+      else if (strcmp (a, "--chaos"             ) == 0) {
+         my.chaos          = 'y';
+      }
+      else if (strcmp (a, "--ordered"           ) == 0) {
+         my.chaos          = '-';
       }
    }
    /*---(display urgents)----------------*/

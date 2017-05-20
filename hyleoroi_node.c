@@ -168,12 +168,14 @@ NODE_level         (int a_level, tNODE *a_parent)
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return rce;
    }
+   /*---(level)--------------------------*/
+   a_parent->level = a_level;
+   /*---(prepare)------------------------*/
    --rce;  if (a_parent->nchild == 0) {
       DEBUG_INPT   yLOG_info    ("nchild"   ,  "no children to process");
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return 0;
    }
-   /*---(prepare)------------------------*/
    x_curr = a_parent->sib_head;
    /*---(show children)------------------*/
    while (x_curr != NULL) {
@@ -203,7 +205,7 @@ NODE_dump          (
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return rce;
    }
-   a_parent->level = a_level;
+   /*> a_parent->level = a_level;                                                     <*/
    --rce;  if (a_parent->nchild == 0) {
       DEBUG_INPT   yLOG_info    ("nchild"   ,  "no children to process");
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);

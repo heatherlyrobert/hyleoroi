@@ -509,6 +509,8 @@ DRAW__radial_text    (tNODE *a_node, char a_style)
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
+   --rce;  if (a_node->label [0] == '-')    return rce;
+   --rce;
    if      (a_node->level  > 7  ) {
       if   (a_node->width <= 1.0)   return  rce;
    }

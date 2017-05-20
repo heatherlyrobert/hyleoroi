@@ -134,8 +134,9 @@ NODE_show          (int a_level, tNODE *a_node)
    char        x_print     [150] = "";
    if (a_node == NULL) return  -11;
    for (i = 0; i < a_level; ++i)  strcat (x_indent, "   ");
-   if ((s_count %  5) == 0)  printf ("\n");
-   if ((s_count % 25) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n\n");
+   /*> if ((s_count %  5) == 0)  printf ("\n");                                       <*/
+   /*> if ((s_count % 25) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n\n");   <*/
+   if ((s_count %  5) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n");
    sprintf (x_print, "%02d.%02d.%s%s", a_level, a_node->level, x_indent, a_node->name);
    printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f  %3d\n",
          x_print      ,
@@ -187,6 +188,23 @@ NODE_level         (int a_level, tNODE *a_parent)
    return 0;
 }
 
+tNODE*       /*-> find a node by name/label --------------[ ------ [ ------ ]-*/
+NODE_find_name     (char *a_label)
+{
+   tNODE      *x_curr      = NULL;
+   if (a_label == NULL)  return NULL;
+   x_curr = h_node;
+   while (x_curr != NULL) {
+      if (x_curr->label != NULL) {
+         if (x_curr->label [0] == a_label [0]) {
+            if (strcmp (x_curr->label, a_label) == 0)  return x_curr;
+         }
+      }
+      x_curr = x_curr->next;
+   }
+   return NULL;
+}
+
 char         /*--: print a report of nodes ---------------[ leaf   [ ------ ]-*/
 NODE_dump          (
       /*---(formal parameters)+-------------+---------------------------------*/
@@ -210,6 +228,13 @@ NODE_dump          (
       DEBUG_INPT   yLOG_info    ("nchild"   ,  "no children to process");
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return 0;
+   }
+   /*---(titles)-------------------------*/
+   if (a_level == 0) {
+      s_count = 0;
+      printf ("\n\n");
+      printf ("HYLEOROI (forest watchers) tree structure visualization [%s]\n", VER_NUM);
+      printf ("\n");
    }
    /*---(prepare)------------------------*/
    if (a_parent == h_node) NODE_show (a_level, a_parent);
@@ -239,12 +264,12 @@ NODE_root          (tNODE *a_node)
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return  -11;
    }
-   DEBUG_INPT   yLOG_spoint  (h_node);
-   if (a_node != h_node) {
-      DEBUG_INPT   yLOG_snote   ("does not match head");
-      DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
-      return  -12;
-   }
+   /*> DEBUG_INPT   yLOG_spoint  (h_node);                                            <*/
+   /*> if (a_node != h_node) {                                                        <* 
+    *>    DEBUG_INPT   yLOG_snote   ("does not match head");                          <* 
+    *>    DEBUG_INPT   yLOG_sexit   (__FUNCTION__);                                   <* 
+    *>    return  -12;                                                                <* 
+    *> }                                                                              <*/
    /*---(initialize)---------------------*/
    DEBUG_INPT   yLOG_snote   ("initialize to whole");
    a_node->beg    = 0.0;
@@ -253,6 +278,122 @@ NODE_root          (tNODE *a_node)
    a_node->end    = my.full_size;
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
+   return 0;
+}
+
+char         /*--: process nodes -------------------------[ leaf   [ ------ ]-*/
+NODE__size_wipe      (tNODE *a_node)
+{
+   a_node->beg   = 0.0;
+   a_node->pct   = 0.0;
+   a_node->width = 0.0;
+   a_node->end   = 0.0;
+   return 0;
+}
+
+char         /*--: process nodes -------------------------[ leaf   [ ------ ]-*/
+NODE__size_purge     (int a_level, tNODE *a_parent)
+{
+   /*---(local variables)--+-----------+-*/
+   tNODE      *x_child     = NULL;
+   char        rce         =  -10;          /* return code for errors         */
+   /*---(defense)------------------------*/
+   --rce;  if (a_parent == NULL)  return rce;
+   /*---(check root)---------------------*/
+   if (a_level == 0)  NODE_wipe (a_parent);
+   /*---(process siblings)---------------*/
+   x_child = a_parent->sib_head;
+   while (x_child != NULL) {
+      if (x_child->level > my.max_depth)  my.max_depth = x_child->level;
+      NODE__size_wipe (x_child);
+      if (x_child->nchild > 0) NODE__size_purge  (a_level + 1, x_child);
+      x_child = x_child->sib_next;
+   }
+   /*---(complete)-----------------------*/
+   return 0;
+}
+
+char         /*--: process nodes -------------------------[ leaf   [ ------ ]-*/
+NODE_size_purge      (void)
+{
+   NODE__size_purge  (0, h_node);
+   return 0;
+}
+
+char         /*--: process nodes -------------------------[ leaf   [ ------ ]-*/
+NODE_resize        (int a_level, tNODE *a_parent)
+{
+   /*---(local variables)--+-----------+-*/
+   tNODE      *x_child     = NULL;
+   char        rce         =  -10;          /* return code for errors         */
+   int         i           =    0;          /* generic iterator -- fields     */
+   char        x_print     [150] = "";
+   double      x_size      =  0.0;
+   double      x_total     =  0.0;
+   double      x_beg       =  0.0;
+   double      x_width     =  0.0;
+   int         c           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   DEBUG_INPT   yLOG_point   ("a_parent"  , a_parent);
+   /*---(defense)------------------------*/
+   --rce;  if (a_parent == NULL) {
+      DEBUG_INPT   yLOG_note    ("can not process NULL");
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   if (a_parent->name != NULL) {
+      DEBUG_INPT   yLOG_info    ("name"      , a_parent->name);
+   } else {
+      DEBUG_INPT   yLOG_info    ("name"      , "((null))");
+   }
+   /*---(check root)---------------------*/
+   if (a_level == 0)  NODE_root (a_parent);
+   /*---(defense)------------------------*/
+   DEBUG_INPT   yLOG_double  ("size"      , a_parent->size);
+   if (a_parent->size <= 0.0) {
+      DEBUG_INPT   yLOG_note    ("can not process zero or less");
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return rce;
+   }
+   /*---(prepare)------------------------*/
+   DEBUG_INPT   yLOG_note    ("prepare");
+   x_size   = a_parent->size;
+   x_beg    = a_parent->beg;
+   x_width  = a_parent->width;
+   DEBUG_INPT   yLOG_value   ("nchild"    , a_parent->nchild);
+   /*---(process siblings)---------------*/
+   x_child = a_parent->sib_head;
+   while (x_child != NULL) {
+      if (x_child->level > my.max_depth)  my.max_depth = x_child->level;
+      /*---(prepare)---------------------*/
+      ++c;
+      DEBUG_INPT   yLOG_value   ("count"     , c);
+      if (x_child->name != NULL) {
+         DEBUG_INPT   yLOG_info    ("name"      , x_child->name);
+      } else {
+         DEBUG_INPT   yLOG_info    ("name"      , "((null))");
+      }
+      /*---(calculate)-------------------*/
+      x_child->beg   = x_beg;
+      x_child->pct   = x_child->size / x_size;
+      x_child->width = x_child->pct  * x_width;
+      x_child->end   = x_beg + x_child->width;
+      x_beg          = x_child->end;
+      x_total       += x_child->size;
+      DEBUG_INPT   yLOG_double  ("beg"       , x_child->beg);
+      DEBUG_INPT   yLOG_double  ("pct"       , x_child->pct);
+      DEBUG_INPT   yLOG_double  ("width"     , x_child->width);
+      DEBUG_INPT   yLOG_double  ("end"       , x_child->end);
+      /*---(dive in)---------------------*/
+      if (x_child->nchild > 0) {
+         NODE_resize  (a_level + 1, x_child);
+      }
+      /*---(next)------------------------*/
+      x_child = x_child->sib_next;
+      /*---(done)------------------------*/
+   }
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

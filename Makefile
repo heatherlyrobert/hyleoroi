@@ -10,10 +10,10 @@ COMP    = gcc -c -std=gnu89 -x c -g -pg -Wall -Wextra
 INCS    = -I/usr/local/include 
 LINK    = gcc 
 LIBS    =
-LIBS    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lySTR -lyFONT
-LIBD    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lySTR -lyFONT -lyLOG
-OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os
-OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o
+LIBS    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT
+LIBD    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT -lyLOG
+OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_keys.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os ${BASE}_graph.os
+OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_keys.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o  ${BASE}_graph.o
 
 #*---(make variables)-----------------*#
 COPY    = cp -f  
@@ -37,30 +37,40 @@ ${BASE}            : ${OBJD}
 
 
 #*---(normal objects)-----------------*#
-${BASE}_main.o     : ${BASE}.h    ${BASE}_main.c
-	${COMP}    ${BASE}_main.c                        ${INC}
-	${STRIP}   ${BASE}_main.c    > ${BASE}_main.cs
-	${COMP}    ${BASE}_main.cs  -o ${BASE}_main.os   ${INC}
+${BASE}_main.o     : ${BASE}.h     ${BASE}_main.c
+	${COMP}    ${BASE}_main.c                          ${INC}
+	${STRIP}   ${BASE}_main.c     > ${BASE}_main.cs
+	${COMP}    ${BASE}_main.cs   -o ${BASE}_main.os    ${INC}
 
-${BASE}_prog.o     : ${BASE}.h    ${BASE}_prog.c
-	${COMP}    ${BASE}_prog.c                        ${INC}
-	${STRIP}   ${BASE}_prog.c    > ${BASE}_prog.cs
-	${COMP}    ${BASE}_prog.cs  -o ${BASE}_prog.os   ${INC}
+${BASE}_prog.o     : ${BASE}.h     ${BASE}_prog.c
+	${COMP}    ${BASE}_prog.c                          ${INC}
+	${STRIP}   ${BASE}_prog.c     > ${BASE}_prog.cs
+	${COMP}    ${BASE}_prog.cs   -o ${BASE}_prog.os    ${INC}
 
-${BASE}_file.o     : ${BASE}.h    ${BASE}_file.c
-	${COMP}    ${BASE}_file.c                        ${INC}
-	${STRIP}   ${BASE}_file.c    > ${BASE}_file.cs
-	${COMP}    ${BASE}_file.cs  -o ${BASE}_file.os   ${INC}
+${BASE}_keys.o     : ${BASE}.h     ${BASE}_keys.c
+	${COMP}    ${BASE}_keys.c                          ${INC}
+	${STRIP}   ${BASE}_keys.c     > ${BASE}_keys.cs
+	${COMP}    ${BASE}_keys.cs   -o ${BASE}_keys.os    ${INC}
 
-${BASE}_node.o     : ${BASE}.h    ${BASE}_node.c
-	${COMP}    ${BASE}_node.c                        ${INC}
-	${STRIP}   ${BASE}_node.c    > ${BASE}_node.cs
-	${COMP}    ${BASE}_node.cs  -o ${BASE}_node.os   ${INC}
+${BASE}_file.o     : ${BASE}.h     ${BASE}_file.c
+	${COMP}    ${BASE}_file.c                          ${INC}
+	${STRIP}   ${BASE}_file.c     > ${BASE}_file.cs
+	${COMP}    ${BASE}_file.cs   -o ${BASE}_file.os    ${INC}
 
-${BASE}_draw.o     : ${BASE}.h    ${BASE}_draw.c
-	${COMP}    ${BASE}_draw.c                        ${INC}
-	${STRIP}   ${BASE}_draw.c    > ${BASE}_draw.cs
-	${COMP}    ${BASE}_draw.cs  -o ${BASE}_draw.os   ${INC}
+${BASE}_node.o     : ${BASE}.h     ${BASE}_node.c
+	${COMP}    ${BASE}_node.c                          ${INC}
+	${STRIP}   ${BASE}_node.c     > ${BASE}_node.cs
+	${COMP}    ${BASE}_node.cs   -o ${BASE}_node.os    ${INC}
+
+${BASE}_draw.o     : ${BASE}.h     ${BASE}_draw.c
+	${COMP}    ${BASE}_draw.c                          ${INC}
+	${STRIP}   ${BASE}_draw.c     > ${BASE}_draw.cs
+	${COMP}    ${BASE}_draw.cs   -o ${BASE}_draw.os    ${INC}
+
+${BASE}_graph.o     : ${BASE}.h    ${BASE}_graph.c
+	${COMP}    ${BASE}_graph.c                         ${INC}
+	${STRIP}   ${BASE}_graph.c    > ${BASE}_graph.cs
+	${COMP}    ${BASE}_graph.cs  -o ${BASE}_graph.os   ${INC}
 
 
 

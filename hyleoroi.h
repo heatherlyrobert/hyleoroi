@@ -259,11 +259,12 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5i"
-#define     VER_TXT   "another fix to leveling logic in NODE_levelall"
+#define     VER_NUM   "v0.5j"
+#define     VER_TXT   "add _keys.c and _graph.c to begin cleanup and simplification"
 
 
 
+#define     LEN_STR    100
 #define     MAX_STR     50
 #define     MAX_NAME   100
 #define     MAX_RECD  2000
@@ -316,11 +317,9 @@ extern      int         g_ncolor;
 #define     MAX_FORMAT  100
 typedef     struct      cFORMAT      tFORMAT;
 struct cFORMAT {
-   char        type;
-   char        format;
+   char        name        [20];            /* identification for finding     */
+   char        depth;                       /* max layers shown               */
    int         full;
-   int         orig_x;
-   int         orig_y;
    int         cutoff;
    int         point;
    int         ring;
@@ -331,13 +330,13 @@ struct cFORMAT {
    int         l4;
    int         l5;
    int         l6;
-   char        tdesc        [50];
-   char        fdesc        [50];
-   char        label        [10];
+   char        tdesc       [50];
+   char        fdesc       [50];
+   char        label       [10];
    char        ghost;
    char        noempty;
 };
-extern      tFORMAT     formats      [MAX_FORMAT];
+extern      tFORMAT     g_formats      [MAX_FORMAT];
 
 float  ctrl[3][3];
 
@@ -350,25 +349,49 @@ extern      float       my_cos [4000];
 #define     MAX_RING   20
 typedef     struct     cGLOBAL      tGLOBAL;
 struct cGLOBAL {
+   /*===[[ ------- ]]=======================*/
    /*---(window)-------------------------*/
-   char        title       [100];      /* window title                        */
    char        source      [100];      /* source program for data             */
    char        report      [100];      /* source context for data             */
-   int         win_h;                  /* window height                       */
-   int         win_w;                  /* window width                        */
    int         tex_h;                  /* texture height                      */
    int         tex_w;                  /* texture width                       */
    char        type;                   /* mime, dirtree, etc                  */
    char        format;                 /* radial, block, etc                  */
    double      full_size;              /* full size of graph (arc or length)  */
-   int         orig_x;                 /* origin x-coordinate                 */
-   int         orig_y;                 /* origin y-coordinate                 */
    char        fdesc       [100];      /* format title                        */
    char        tdesc       [100];      /* type title                          */
    char        label       [ 10];      /* node title flags                    */
    char        ghost;                  /* show child wedges (y/n)             */
    char        radial;                 /* radial format                       */
    int         max_depth;              /* deepest part of tree in use         */
+   /*===[[ windows ]]=======================*/
+   /*---(window sizes)----*/
+   char        w_title     [LEN_STR];       /* window title                   */
+   int         w_wide;                      /* window width                   */
+   int         w_tall;                      /* window heigth                  */
+   /*---(main window)-----*/
+   int         m_wide;                      /* width  of main window          */
+   int         m_left;                      /* left   of main window        */
+   int         m_tall;                      /* height of main window        */
+   int         m_bott;                      /* bottom of main window        */
+   /*---(tag window)------*/
+   int         t_wide;                      /* width  of tag panel            */
+   int         t_left;                      /* left   of tag panel            */
+   int         t_tall;                      /* height of tag panel            */
+   int         t_bott;                      /* bottom of tag panel            */
+   /*---(command window)--*/
+   int         c_wide;                      /* width  of command line         */
+   int         c_left;                      /* left   of command line         */
+   int         c_tall;                      /* height of command line         */
+   int         c_bott;                      /* bottom of command line         */
+   /*---(alt/detail)------*/
+   int         a_wide;                      /* width  of alt/detail window    */
+   int         a_left;                      /* left   of alt/detail window    */
+   int         a_tall;                      /* height of alt/detail window    */
+   int         a_bott;                      /* bottom of alt/detail window    */
+   /*===[[ ------- ]]=======================*/
+   /*---(reporting)----------------------*/
+   char        node_dump;              /* dump full node table                */
    /*---(colors)-------------------------*/
    int         color;                  /* next color to use in node           */
    uint        color_start;            /* initial color seed                  */
@@ -406,6 +429,7 @@ extern      tGLOBAL    my;
 #define     INC_SPEED   0.1
 #define     MAX_SPEED   0.5
 #define     OPT_PRINT      if (my.print == 'y') 
+#define     NODE_DUMP   if (my.node_dump == 'y')
 
 
 
@@ -504,6 +528,7 @@ char        PROG_testloud      (void);
 
 
 
+char        DRAW_window_sizes  (void);
 
 char        DRAW_globals       (void);
 char        DRAW_init          (void);
@@ -542,6 +567,9 @@ char        NODE_dump          (int a_level, tNODE *a_parent, char a_recurse );
 char        NODE_reroot        (void);
 char        NODE_level         (int a_level, tNODE *a_parent);
 char        NODE_levelall      (void);
+tNODE*      NODE_find_name     (char *a_label);
+char        NODE_resize        (int a_level, tNODE *a_parent);
+char        NODE_size_purge    (void);
 
 
 

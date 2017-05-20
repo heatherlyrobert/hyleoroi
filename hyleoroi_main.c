@@ -67,13 +67,12 @@ main               (int argc, char *argv[])
    }
    NODE_levelall ();
    NODE_process  (0, h_node);
-   /*> NODE_dump     (0, h_node, 'y');                                                <*/
-
-
+   NODE_DUMP   NODE_dump  (0, h_node, 'y');
 
    /*---(drawing setup)------------------*/
    TEX_draw     ();
-   DRAW_resize  (my.win_w, my.win_h);
+   NODE_DUMP   NODE_dump  (0, h_node, 'y');
+   DRAW_resize  (my.w_wide, my.w_tall);
    /*---(main)---------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    while (rc >= 0) {

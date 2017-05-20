@@ -18,8 +18,9 @@ char       *face_bg     = "verdana";
 int         txf_sm;
 int         txf_bg;
 
-tCOLOR      colors [400];
-int         n_color;
+tCOLOR      g_colors [400];
+int         g_ncolor;
+int         n_all_color;
 
 
 char        scheme [400][10] =
@@ -118,17 +119,19 @@ DRAW_globals       (void)
    my.ydist        =  0.0;
    my.zdist        =  400;
    yLOG_snote   ("colors");
-   n_color         =    0;
+   g_ncolor         =    0;
+   n_all_color     =    0;
    DEBUG_COLOR  yLOG_note    ("adding colors from scheme");
    DEBUG_COLOR  yLOG_complex ("my.cutoff" , "%4.2f", my.cutoff);
    for (i = 0; i < 400; ++i) {
       if (scheme [i][0] == '-')  break;
-      colors [n_color].red = DRAW_unhex (scheme [i][1], scheme [i][2]);
-      colors [n_color].grn = DRAW_unhex (scheme [i][3], scheme [i][4]);
-      colors [n_color].blu = DRAW_unhex (scheme [i][5], scheme [i][6]);
-      x_bright = colors [n_color].red + colors [n_color].grn + colors [n_color].blu;
-      colors [n_color].bri = x_bright;
-      DEBUG_COLOR  yLOG_complex ("color"     , "red=%4.2f, grn=%4.2f, blu=%4.2f, bri=%4.2f", colors [n_color].red, colors [n_color].grn, colors [n_color].blu, x_bright);
+      g_colors [g_ncolor].red = DRAW_unhex (scheme [i][1], scheme [i][2]);
+      g_colors [g_ncolor].grn = DRAW_unhex (scheme [i][3], scheme [i][4]);
+      g_colors [g_ncolor].blu = DRAW_unhex (scheme [i][5], scheme [i][6]);
+      x_bright = g_colors [g_ncolor].red + g_colors [g_ncolor].grn + g_colors [g_ncolor].blu;
+      g_colors [g_ncolor].bri = x_bright;
+      ++n_all_color;
+      DEBUG_COLOR  yLOG_complex ("color"     , "red=%4.2f, grn=%4.2f, blu=%4.2f, bri=%4.2f", g_colors [g_ncolor].red, g_colors [g_ncolor].grn, g_colors [g_ncolor].blu, x_bright);
       if (my.cutoff  > 1.5 && x_bright > my.cutoff) {
          DEBUG_COLOR  yLOG_note    ("skipped");
          continue;
@@ -137,9 +140,9 @@ DRAW_globals       (void)
          DEBUG_COLOR  yLOG_note    ("skipped");
          continue;
       }
-      ++n_color;
+      ++g_ncolor;
    }
-   DEBUG_COLOR  yLOG_value   ("n_color"   , n_color);
+   DEBUG_COLOR  yLOG_value   ("g_ncolor"   , g_ncolor);
    /*---(complete)-----------------------*/
    DEBUG_COLOR  yLOG_exit    (__FUNCTION__);
    return 0;
@@ -332,7 +335,7 @@ DRAW__color_back   ()
 char         /*--: set the node color --------------------[ leaf   [ ------ ]-*/
 DRAW__color_node     (tNODE *a_node)
 {
-   glColor4f (colors [a_node->color].red, colors [a_node->color].grn, colors [a_node->color].blu, 1.00);
+   glColor4f (g_colors [a_node->color].red, g_colors [a_node->color].grn, g_colors [a_node->color].blu, 1.00);
    return 0;
 }
 
@@ -341,7 +344,7 @@ DRAW__color_text     (tNODE *a_node, char a_style)
 {
    if (a_style == 'h')
       glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
-   else if (colors [a_node->color].bri < 0.8)    /* was 1.5  */
+   else if (g_colors [a_node->color].bri < 0.8)    /* was 1.5  */
       glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
    else  
       glColor4f   (0.0f, 0.0f, 0.0f, 1.0f);
@@ -588,7 +591,7 @@ DRAW_block         (tNODE *a_node)
    default  : strcpy (t     , a_node->label);   break;
    }
    /*---(draw)---------------------------*/
-   /*> glColor4f (colors [a_node->color]. red,colors [a_node->color].grn, colors [a_node->color].blu, 1.00);   <*/
+   /*> glColor4f (g_colors [a_node->color]. red,g_colors [a_node->color].grn, g_colors [a_node->color].blu, 1.00);   <*/
    glBegin (GL_POLYGON); {
       /*---(set level)-------------------*/
       glTranslatef ( 0.0,  0.0, - (a_node->level * 20));
@@ -601,7 +604,7 @@ DRAW_block         (tNODE *a_node)
    } glEnd();
    /*---(label)--------------------------*/
    if (a_node->width >= 10) {
-      if (colors [a_node->color].bri < 1.5)  glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
+      if (g_colors [a_node->color].bri < 1.5)  glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
       else                                   glColor4f   (0.0f, 0.0f, 0.0f, 1.0f);
       glTranslatef ( x_text, y_text, 0.0);
       yFONT_print (txf_bg, my.point, YF_MIDLEF, t);
@@ -792,7 +795,10 @@ TEX_show           (void)
    glPushMatrix(); {
       DRAW__color_fore ();
       glTranslatef(-345.0, -335.0,  200.0);
-      sprintf (t, "%d color max-diff palette", n_color);
+      sprintf (t, "%d color max-diff palette", n_all_color);
+      yFONT_print (txf_bg, 10, YF_TOPLEF, t);
+      glTranslatef(   0.0,   15.0,    0.0);
+      sprintf (t, "using %d colors"          , g_ncolor);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef(   0.0,   15.0,    0.0);
       sprintf (t, "start color %d", my.color_start);
@@ -817,24 +823,12 @@ TEX_show           (void)
       glTranslatef(   0.0,  -12.0,    0.0);
       yFONT_print (txf_bg, 14, YF_TOPRIG, my.source);
       glTranslatef(   0.0,  -18.0,    0.0);
-      sprintf (t, "nodes %d", n_node);
+      sprintf (t, "total nodes %d", n_node);
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);
       glTranslatef(   0.0,  -14.0,    0.0);
       sprintf (t, "max depth %d", my.max_depth);
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);
    } glPopMatrix();
-   /*> for (x = -1200; x <= 600; x += 100) {                                          <* 
-    *>    for (y = -1200; y <= 600; y += 100) {                                       <* 
-    *>       for (z =    0; z <=   0; z += 100) {                                     <* 
-    *>          glPushMatrix(); {                                                     <* 
-    *>             DRAW__color_fore ();                                                   <* 
-    *>             sprintf (t, "%3d, %3d", x, y);                                     <* 
-    *>             glTranslatef( x, y, z);                                            <* 
-    *>             yFONT_print (txf_bg,  8, YF_TOPLEF, t);                            <* 
-    *>          } glPopMatrix();                                                      <* 
-    *>       }                                                                        <* 
-    *>    }                                                                           <* 
-    *> }                                                                              <*/
    /*---(graph)-----------------------------*/
    glTranslatef    ( my.xdist,  my.ydist,   0.0);
    glBindTexture   (GL_TEXTURE_2D, s_tex);

@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5g"
-#define     VER_TXT   "huge update to overview and narritive in man file"
+#define     VER_NUM   "v0.5h"
+#define     VER_TXT   "fixed color filtering based on color scheme"
 
 
 
@@ -309,8 +309,8 @@ struct      cCOLOR {
    float       blu;
    float       bri;
 };
-extern      tCOLOR      colors [400];
-extern      int         n_color;
+extern      tCOLOR      g_colors [400];
+extern      int         g_ncolor;
 
 
 #define     MAX_FORMAT  100
@@ -373,6 +373,7 @@ struct cGLOBAL {
    int         color;                  /* next color to use in node           */
    uint        color_start;            /* initial color seed                  */
    uint        color_seed;             /* seed for random                     */
+   float       cutoff;
    /*---(sizing)-------------------------*/
    int         ring;
    int         point;
@@ -392,7 +393,6 @@ struct cGLOBAL {
    int         space;
    float       explode;
    tNODE      *focus;
-   float       cutoff;
    char        scheme;
    char        chaos;
    char        noempty;

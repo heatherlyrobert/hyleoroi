@@ -70,6 +70,7 @@ main               (int argc, char *argv[])
    NODE_dump     (0, h_node, 'y');
 
 
+
    /*---(drawing setup)------------------*/
    TEX_draw     ();
    DRAW_resize  (my.win_w, my.win_h);

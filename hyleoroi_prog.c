@@ -296,7 +296,6 @@ PROG_init          (void)
       my_sin [i] = sin (d * DEG2RAD);
       my_cos [i] = cos (d * DEG2RAD);
    }
-   DRAW_globals ();
    /*---(complete)-----------------------*/
    DEBUG_TOPS   yLOG_exit    (__FUNCTION__);
    return 0;
@@ -336,9 +335,6 @@ PROG_args          (int argc, char *argv[])
          my.format         = 'r';
          my.inc            =  PLAY;
       }
-      else if (strcmp (a, "--color"             ) == 0) {
-         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
-      }
       else if (strcmp (a, "--space"             ) == 0) {
          if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.space   = atoi (argv[++i]);
       }
@@ -347,6 +343,19 @@ PROG_args          (int argc, char *argv[])
       }
       else if (strcmp (a, "--cutoff"            ) == 0) {
          if (i + 1 < argc) if (atof (argv [i + 1]) > 0 )  my.cutoff  = atof (argv[++i]);
+      }
+      else if (strcmp (a, "--mime"              ) == 0) {
+         my.type    = 'm';
+      }
+      else if (strcmp (a, "--dirtree"           ) == 0) {
+         my.type    = 'd';
+      }
+      /*---(color options)---------------*/
+      else if (strcmp (a, "--color"             ) == 0) {
+         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
+      }
+      else if (strcmp (a, "--chaos"             ) == 0) {
+         my.chaos          = 'y';
       }
       else if (strcmp (a, "--white"             ) == 0) {
          my.scheme  = 'w';
@@ -364,13 +373,6 @@ PROG_args          (int argc, char *argv[])
          my.scheme  = 'b';
          my.cutoff  = 0.7;
       }
-      else if (strcmp (a, "--mime"              ) == 0) {
-         my.type    = 'm';
-      }
-      else if (strcmp (a, "--dirtree"           ) == 0) {
-         my.type    = 'd';
-      }
-      else if (strcmp (a, "--chaos"             ) == 0)    my.chaos          = 'y';
    }
    /*---(display urgents)----------------*/
    DEBUG_ARGS   yLOG_note    ("summarization of argument processing");
@@ -388,11 +390,11 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   if (my.color_start == 0)  my.color_seed  = my.color_start = 1;
-   else                      my.color_seed  = my.color_start;
-   printf ("color       = %d\n", my.color);
-   printf ("color_start = %d\n", my.color_start);
-   printf ("color_seed  = %d\n", my.color_seed);
+   DRAW_globals ();
+   if (my.chaos == 'y') {
+      if (my.color_start == 0)  my.color_seed  = my.color_start = 1;
+      else                      my.color_seed  = my.color_start;
+   }
    for (i = 0; i < MAX_FORMAT; ++i) {
       if (formats [i].full == 0) break;
       if (formats [i].type   != my.type  )  continue;
@@ -400,7 +402,7 @@ PROG_begin         (void)
       my.full_size  = formats [i].full;
       my.orig_x     = formats [i].orig_x;
       my.orig_y     = formats [i].orig_y;
-      my.cutoff     = formats [i].cutoff;
+      /*> my.cutoff     = formats [i].cutoff;                                         <*/
       my.point      = formats [i].point;
       my.ring       = formats [i].ring;
       my.thick [0]  = formats [i].l0;

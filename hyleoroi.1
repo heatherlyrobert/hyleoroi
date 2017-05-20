@@ -65,6 +65,45 @@ complex data sets.
    -- no simple block diagrams that take too much space
    -- no output other that visual
 
+.SH OPTIONS
+
+.B color options.  
+hyleoroi uses a large max-contrast color palette borrowed from Tatarize
+at godsnotwheregodsnot.ru.  this palette is awesome and well conceived.
+it was designed for the display of very large data sets.
+
+.B --white
+.RS 8
+white background, filters out bright colors (default)
+.RE
+
+.B --light
+.RS 8
+light grey background, filters out more bright colors
+.RE
+
+.B --black
+.RS 8
+black background, filters out dark colors
+.RE
+
+.B --dark
+.RS 8
+dark grey background, filters out more dark colors
+.RE
+
+.B --color <n>
+.RS 8
+sets start color when drawing from root out, default is 0
+.RE
+
+.B --chaos
+.RS 8
+randomizes colors use rather than sequentially assigning.  when randomizing
+the value in --color is used as the randomization seed.  using the same
+start color will result in the same color assignments every time.
+.RE
+
 .SH STDIN FORMAT
 
 .B 1

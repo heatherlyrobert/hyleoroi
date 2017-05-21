@@ -265,15 +265,11 @@ PROG_init          (void)
    /*---(begin)--------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---(globals)------------------------*/
+   COLOR_init ();
    my.print       =  '-';
    my.space       =    0;
    my.explode     =  0.0;
    my.focus       = NULL;
-   my.scheme      =  'w';
-   my.cutoff      =  2.3;
-   my.chaos       =  '-';
-   my.color_seed  =    1;
-   my.color_start =    0;
    my.noempty     =  '-';
    my.hints       =  '-';
    my.ring        =  170;
@@ -287,7 +283,6 @@ PROG_init          (void)
    my.ghost       = '-';
    my.max_depth   =  -1;
    my.empty       = NULL;
-   my.color       =   0;
    my.node_dump   =  '-';
    /*---(default run-time options)-------*/
    DEBUG_TOPS   yLOG_note    ("pre-load trig values");
@@ -354,22 +349,10 @@ PROG_args          (int argc, char *argv[])
          my.node_dump    = 'y';
       }
       /*---(color options)---------------*/
-      else if (strcmp (a, "--white"             ) == 0) {
-         my.scheme  = 'w';
-         my.cutoff  = 2.3;
-      }
-      else if (strcmp (a, "--light"             ) == 0) {
-         my.scheme  = 'l';
-         my.cutoff  = 1.7;
-      }
-      else if (strcmp (a, "--dark"              ) == 0) {
-         my.scheme  = 'd';
-         my.cutoff  = 1.2;
-      }
-      else if (strcmp (a, "--black"             ) == 0) {
-         my.scheme  = 'b';
-         my.cutoff  = 0.7;
-      }
+      else if (strcmp (a, "--white"             ) == 0)  COLOR_set_scheme (COLOR_WHITE);
+      else if (strcmp (a, "--light"             ) == 0)  COLOR_set_scheme (COLOR_LIGHT);
+      else if (strcmp (a, "--dark"              ) == 0)  COLOR_set_scheme (COLOR_DARK );
+      else if (strcmp (a, "--black"             ) == 0)  COLOR_set_scheme (COLOR_BLACK);
       else if (strcmp (a, "--color"             ) == 0) {
          if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
       }
@@ -397,10 +380,6 @@ PROG_begin         (void)
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
    DRAW_globals ();
-   if (my.chaos == 'y') {
-      if (my.color_start == 0)  my.color_seed  = my.color_start = 1;
-      else                      my.color_seed  = my.color_start;
-   }
    for (i = 0; i < MAX_FORMAT; ++i) {
       if (g_formats [i].name [0] = '\0')      break;
       /*> my.cutoff     = g_formats [i].cutoff;                                         <*/
@@ -428,6 +407,7 @@ PROG_begin         (void)
    my.thick [0] =  400;
    my.thick [1] = 1200;
    my.thick [2] = 1200;
+   COLOR_filter ();
    NODE_init    ();
    DRAW_window_sizes ();
    yXINIT_start (my.w_title, my.w_wide, my.w_tall, YX_FOCUSABLE, YX_FIXED, YX_SILENT);

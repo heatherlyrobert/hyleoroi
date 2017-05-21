@@ -51,7 +51,7 @@ main               (int argc, char *argv[])
       return -1;
    }
    /*---(node setup)---------------------*/
-   /*> rc = NODE_read    (0, h_node);                                                 <*/
+   /*> rc = NODE_read    (0, g_hnode);                                                 <*/
    rc = FILE_main    ();
    if (rc < 0) return rc;
 
@@ -62,16 +62,16 @@ main               (int argc, char *argv[])
 
 
    if (my.noempty == 'y' && my.empty != NULL) {
-      h_node->size   -= my.empty->size;
+      g_hnode->size   -= my.empty->size;
       my.empty->size  = 0;
    }
    NODE_levelall ();
-   NODE_process  (0, h_node);
-   NODE_DUMP   NODE_dump  (0, h_node, 'y');
+   NODE_process  (0, g_hnode);
+   NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
 
    /*---(drawing setup)------------------*/
    TEX_draw     ();
-   NODE_DUMP   NODE_dump  (0, h_node, 'y');
+   NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
    DRAW_resize  (my.w_wide, my.w_tall);
    /*---(main)---------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);

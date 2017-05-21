@@ -3,22 +3,23 @@
 
 
 
-tNODE      *h_node;
-tNODE      *t_node;
-int         n_node;
+tNODE      *g_hnode;
+tNODE      *g_tnode;
+int         g_nnode;
+tNODE      *g_bnode;
 
 
 
 char         /*===[[ prepare for program ]]===============[ ------ [ ------ ]=*/
 NODE_init          (void)
 {
-   h_node = NULL;
-   t_node = NULL;
-   n_node = 0;
+   g_hnode = NULL;
+   g_tnode = NULL;
+   g_nnode = 0;
    my.hint_major = 'a';
    my.hint_minor = 'a' - 1;
    NODE_append (NULL);
-   strcpy (h_node->name, ROOT_DEF);
+   strcpy (g_hnode->name, ROOT_DEF);
    return 0;
 }
 
@@ -51,15 +52,15 @@ NODE_append        (
    /*---(hook to overall list)-----------*/
    DEBUG_DATA   yLOG_note    ("hook to overall list");
    x_new->next = NULL;
-   if (n_node == 0)  {
-      h_node        = x_new;
+   if (g_nnode == 0)  {
+      g_hnode        = x_new;
       x_new->prev   = NULL;
    } else {
-      t_node->next  = x_new;
-      x_new->prev   = t_node;
+      g_tnode->next  = x_new;
+      x_new->prev   = g_tnode;
    }
-   t_node = x_new;
-   ++n_node;
+   g_tnode = x_new;
+   ++g_nnode;
    /*---(initialize children)------------*/
    DEBUG_DATA   yLOG_note    ("initialize children");
    x_new->sib_head   = NULL;
@@ -150,7 +151,7 @@ NODE_show          (int a_level, tNODE *a_node)
 char         /*-> fix level indicators on nodes ----------[ ------ [ ------ ]-*/
 NODE_levelall      (void)
 {
-   NODE_level (0, h_node);
+   NODE_level (0, g_hnode);
    return 0;
 }
 
@@ -193,7 +194,7 @@ NODE_find_name     (char *a_label)
 {
    tNODE      *x_curr      = NULL;
    if (a_label == NULL)  return NULL;
-   x_curr = h_node;
+   x_curr = g_hnode;
    while (x_curr != NULL) {
       if (x_curr->label != NULL) {
          if (x_curr->label [0] == a_label [0]) {
@@ -237,7 +238,7 @@ NODE_dump          (
       printf ("\n");
    }
    /*---(prepare)------------------------*/
-   if (a_parent == h_node) NODE_show (a_level, a_parent);
+   if (a_parent == g_hnode) NODE_show (a_level, a_parent);
    x_curr = a_parent->sib_head;
    /*---(show children)------------------*/
    while (x_curr != NULL) {
@@ -264,8 +265,8 @@ NODE_root          (tNODE *a_node)
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return  -11;
    }
-   /*> DEBUG_INPT   yLOG_spoint  (h_node);                                            <*/
-   /*> if (a_node != h_node) {                                                        <* 
+   /*> DEBUG_INPT   yLOG_spoint  (g_hnode);                                            <*/
+   /*> if (a_node != g_hnode) {                                                        <* 
     *>    DEBUG_INPT   yLOG_snote   ("does not match head");                          <* 
     *>    DEBUG_INPT   yLOG_sexit   (__FUNCTION__);                                   <* 
     *>    return  -12;                                                                <* 
@@ -316,7 +317,7 @@ NODE__size_purge     (int a_level, tNODE *a_parent)
 char         /*--: process nodes -------------------------[ leaf   [ ------ ]-*/
 NODE_size_purge      (void)
 {
-   NODE__size_purge  (0, h_node);
+   NODE__size_purge  (0, g_hnode);
    return 0;
 }
 
@@ -424,7 +425,7 @@ NODE_process       (int a_level, tNODE *a_parent)
       DEBUG_INPT   yLOG_info    ("name"      , "((null))");
    }
    /*---(check root)---------------------*/
-   if (a_parent == h_node)  NODE_root (a_parent);
+   if (a_parent == g_hnode)  NODE_root (a_parent);
    /*---(defense)------------------------*/
    DEBUG_INPT   yLOG_double  ("size"      , a_parent->size);
    if (a_parent->size <= 0.0) {
@@ -512,38 +513,38 @@ NODE_reroot        (void)
    tNODE      *x_root      = NULL;
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_senter  (__FUNCTION__);
-   DEBUG_INPT   yLOG_spoint  (h_node);
+   DEBUG_INPT   yLOG_spoint  (g_hnode);
    /*---(defense)------------------------*/
-   --rce;  if (h_node == NULL) {
+   --rce;  if (g_hnode == NULL) {
       DEBUG_INPT   yLOG_snote   ("no tree to process");
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return rce;
    }
-   DEBUG_INPT   yLOG_svalue  ("nchild"    , h_node->nchild);
-   --rce;  if (h_node->nchild == 0) {
+   DEBUG_INPT   yLOG_svalue  ("nchild"    , g_hnode->nchild);
+   --rce;  if (g_hnode->nchild == 0) {
       DEBUG_INPT   yLOG_snote   ("hit bottom");
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return rce;
    }
-   --rce;  if (h_node->nchild > 1) {
+   --rce;  if (g_hnode->nchild > 1) {
       DEBUG_INPT   yLOG_snote   ("already good");
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return rce;
    }
    /*---(identify)-----------------------*/
-   --rce;  if (h_node->name != NULL) {
-      DEBUG_INPT   yLOG_snote   (h_node->name);
-      if (strcmp (h_node->name, ROOT_DEF) != 0) {
+   --rce;  if (g_hnode->name != NULL) {
+      DEBUG_INPT   yLOG_snote   (g_hnode->name);
+      if (strcmp (g_hnode->name, ROOT_DEF) != 0) {
          DEBUG_INPT   yLOG_snote   ("already good");
          DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
          return rce;
       }
    }
    /*---(reroot)-------------------------*/
-   DEBUG_INPT   yLOG_spoint  (h_node->sib_head);
-   DEBUG_INPT   yLOG_spoint  (h_node->next);
-   x_root = h_node->sib_head;
-   --rce;  if (h_node->next != x_root) {
+   DEBUG_INPT   yLOG_spoint  (g_hnode->sib_head);
+   DEBUG_INPT   yLOG_spoint  (g_hnode->next);
+   x_root = g_hnode->sib_head;
+   --rce;  if (g_hnode->next != x_root) {
       DEBUG_INPT   yLOG_snote   ("not well formed");
       DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
       return rce;
@@ -552,10 +553,10 @@ NODE_reroot        (void)
    DEBUG_INPT   yLOG_snote   ("finalize");
    x_root->prev  == NULL;
    x_root->owner == NULL;
-   --n_node;
-   free (h_node);
-   h_node = x_root;
-   DEBUG_INPT   yLOG_spoint  (h_node);
+   --g_nnode;
+   free (g_hnode);
+   g_hnode = x_root;
+   DEBUG_INPT   yLOG_spoint  (g_hnode);
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_sexit   (__FUNCTION__);
    return 0;

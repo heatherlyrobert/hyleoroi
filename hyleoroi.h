@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5j"
-#define     VER_TXT   "add _keys.c and _graph.c to begin cleanup and simplification"
+#define     VER_NUM   "v0.5k"
+#define     VER_TXT   "basic tag display is now in place, but slow"
 
 
 
@@ -299,9 +299,12 @@ struct cNODE {
    tNODE      *next;                   /* pointer to next in overall list     */
    /*---(done)---------------------------*/
 };
-extern      tNODE      *h_node;
-extern      tNODE      *t_node;
-extern      int         n_node;
+extern      tNODE      *g_hnode;
+extern      tNODE      *g_tnode;
+extern      int         g_nnode;
+extern      tNODE      *g_bnode;
+
+
 
 typedef     struct      cCOLOR      tCOLOR;
 struct      cCOLOR {
@@ -312,7 +315,10 @@ struct      cCOLOR {
 };
 extern      tCOLOR      g_colors [400];
 extern      int         g_ncolor;
+extern      int         g_acolor;
 
+extern      int         txf_sm;
+extern      int         txf_bg;
 
 #define     MAX_FORMAT  100
 typedef     struct      cFORMAT      tFORMAT;
@@ -532,17 +538,21 @@ char        DRAW_window_sizes  (void);
 
 char        DRAW_globals       (void);
 char        DRAW_init          (void);
+char        DRAW_main          (void);
+
+
+
 char        PROG_event         (void);
-char        DRAW__radial_vals  (tNODE *a_node);
 char        DRAW__radial_empty (tNODE *a_node, char a_type);
 char        DRAW__radial_full  (tNODE *a_curr);
 char        DRAW_node          (int a_level, tNODE *a_curr, char a_style);
 char        DRAW_level         (int a_level, tNODE *a_first, char a_recurse);
 char        DRAW_resize        (uint a_w, uint a_h);
-/*---(oolors)---------------*/
-char        DRAW__color_fore     ();
-char        DRAW__color_back     ();
-char        DRAW__color_node     (tNODE *a_node);
+char        DRAW__radial_vals  (tNODE *a_node);
+
+char        GRAPH_show         (void);
+
+
 /*---(texture)--------------*/
 char        TEX_free           (void);
 char        TEX_create         (void);
@@ -571,6 +581,28 @@ tNODE*      NODE_find_name     (char *a_label);
 char        NODE_resize        (int a_level, tNODE *a_parent);
 char        NODE_size_purge    (void);
 
+
+/*===[[ HYLEOROI_COLOR.C ]]===================================================*/
+/*---(constants)--------------*/
+#define     COLOR_BLACK        'b'
+#define     COLOR_DARK         'd'
+#define     COLOR_LIGHT        'l'
+#define     COLOR_WHITE        'w'
+/*---(program)----------------*/
+char        COLOR_init         (void);
+char        COLOR_wrap         (void);
+int         COLOR_count        (void);
+/*---(filtering)--------------*/
+char        COLOR_filter       (void);
+int         COLOR_selected     (void);
+/*---(setting)--------------*/
+char        COLOR_set_scheme   (char a_scheme);
+char        COLOR_fore         (void);
+char        COLOR_back         (void);
+char        COLOR_node         (tNODE *a_node);
+char        COLOR_label        (tNODE *a_node, char a_style);
+/*---(cursor)---------------*/
+int         COLOR_next         (void);
 
 
 

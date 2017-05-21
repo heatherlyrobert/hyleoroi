@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5n"
-#define     VER_TXT   "moved TEX_start and TEX_end into yGLTEX (yessssss too)"
+#define     VER_NUM   "v0.5o"
+#define     VER_TXT   "basic tags working as a texture now"
 
 
 
@@ -559,6 +559,10 @@ char        GRAPH_draw         (void);
 char        GRAPH_show         (void);
 
 
+char        TAGS_init          (void);
+char        TAGS_wrap          (void);
+char        TAGS_draw          (void);
+char        TAGS_show          (void);
 
 
 

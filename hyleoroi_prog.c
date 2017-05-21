@@ -404,8 +404,8 @@ PROG_begin         (void)
       if (my.thick [i] == 0)  my.thick [i] = x_cum;
    }
    my.point     =   32;
-   my.thick [0] =  400;
-   my.thick [1] = 1200;
+   my.thick [0] =  200;
+   my.thick [1] =  600;
    my.thick [2] = 1200;
    COLOR_filter ();
    NODE_init    ();

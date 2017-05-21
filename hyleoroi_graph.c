@@ -304,19 +304,17 @@ DRAW_level         (
 
 char             /* [------] draw the texture contents -----------------------*/
 GRAPH_draw         (void)
-{  /*---(locals)-----------+-----------+-*/
+{
+   /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
-   float       x_width     = my.tex_w  / 2.0;
-   float       x_height    = my.tex_h  / 2.0;
-   tNODE      *x_base      = NULL;
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    /*---(setup)--------------------------*/
-   yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
+   rc = yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
    /*---(draw)---------------------------*/
-   glClear               (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    g_bnode = NODE_find_name ("/usr/lib64");
+   /*> g_bnode = g_hnode;                                                             <*/
    if (g_bnode != NULL) {
       NODE_level      (0, g_bnode);
       NODE_size_purge ();
@@ -324,9 +322,9 @@ GRAPH_draw         (void)
       DRAW_level      (0, g_bnode, 'y');
    }
    else  g_bnode = g_hnode;
-   DRAW_level  (0, g_bnode, 'y');
+   rc = DRAW_level  (0, g_bnode, 'y');
    /*---(mipmaps)------------------------*/
-   yGLTEX_draw_end  (s_tex);
+   rc = yGLTEX_draw_end  (s_tex);
    /*---(complete)-----------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
    return 0;

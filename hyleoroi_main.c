@@ -72,6 +72,8 @@ main               (int argc, char *argv[])
    /*---(drawing setup)------------------*/
    GRAPH_init   ();
    GRAPH_draw   ();
+   TAGS_init    ();
+   TAGS_draw    ();
    NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
    DRAW_resize  (my.w_wide, my.w_tall);
    /*---(main)---------------------------*/

@@ -264,7 +264,7 @@ COLOR_label        (tNODE *a_node, char a_style)
 {
    if (a_style == 'h')
       glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
-   else if (g_colors [a_node->color].bri < 0.8)    /* was 1.5  */
+   else if (g_colors [a_node->color].bri < 1.5)    /* was 1.5  */
       glColor4f   (1.0f, 1.0f, 1.0f, 1.0f);
    else  
       glColor4f   (0.0f, 0.0f, 0.0f, 1.0f);

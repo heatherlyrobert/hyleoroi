@@ -12,8 +12,8 @@ LINK    = gcc
 LIBS    =
 LIBS    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT
 LIBD    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT -lyLOG
-OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_keys.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os ${BASE}_color.os ${BASE}_graph.os
-OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_keys.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o  ${BASE}_color.o  ${BASE}_graph.o
+OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_keys.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os ${BASE}_color.os ${BASE}_tags.os  ${BASE}_graph.os
+OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_keys.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o  ${BASE}_color.o  ${BASE}_tags.o   ${BASE}_graph.o
 
 #*---(make variables)-----------------*#
 COPY    = cp -f  
@@ -71,6 +71,11 @@ ${BASE}_color.o     : ${BASE}.h    ${BASE}_color.c
 	${COMP}    ${BASE}_color.c                         ${INC}
 	${STRIP}   ${BASE}_color.c    > ${BASE}_color.cs
 	${COMP}    ${BASE}_color.cs  -o ${BASE}_color.os   ${INC}
+
+${BASE}_tags.o     : ${BASE}.h     ${BASE}_tags.c
+	${COMP}    ${BASE}_tags.c                          ${INC}
+	${STRIP}   ${BASE}_tags.c     > ${BASE}_tags.cs
+	${COMP}    ${BASE}_tags.cs   -o ${BASE}_tags.os    ${INC}
 
 ${BASE}_graph.o     : ${BASE}.h    ${BASE}_graph.c
 	${COMP}    ${BASE}_graph.c                         ${INC}

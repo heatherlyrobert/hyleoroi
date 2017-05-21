@@ -368,106 +368,6 @@ DRAW_alts          (void)
    return;
 }
 
-
-
-/*====================------------------------------------====================*/
-/*===----                       tag window/panel                       ----===*/
-/*====================------------------------------------====================*/
-static void      o___TAGS____________________o (void) {;}
-
-char         /*===[[ draw a level of wedges ]]============[ ------ [ ------ ]=*/
-DRAW_tagentry      (int a_seq, tNODE *a_node)
-{
-   /*---(locals)-----------+-----------+-*/
-   float       x_tall      = 10.0;
-   float       x_margin    =  5.0;
-   float       x_spacer    =  2.0;
-   float       x_top       =  0.0;
-   float       x_bot       =  0.0;
-   float       x_lef       =  0.0;
-   float       x_rig       =  0.0;
-   float       x_text      =  0.0;
-   char        x_name      [LEN_STR];
-   /*---(position)-----------------------*/
-   x_top  = x_margin + a_seq * (x_tall + x_spacer);
-   x_bot  = x_top + x_tall;
-   x_lef  = x_margin;
-   x_rig  = my.t_wide - x_margin;
-   x_text = x_top + (x_tall / 2.0);
-   /*---(draw node)----------------------*/
-   COLOR_node (a_node);
-   glPushMatrix    (); {
-      glBegin         (GL_POLYGON); {
-         glVertex3f  (x_lef, -x_top    ,  0.0f);
-         glVertex3f  (x_rig, -x_top    ,  0.0f);
-         glVertex3f  (x_rig, -x_bot    ,  0.0f);
-         glVertex3f  (x_lef, -x_bot    ,  0.0f);
-      } glEnd   ();
-   } glPopMatrix   ();
-   /*---(draw text)----------------------*/
-   if (a_node->label != NULL)  strlcpy (x_name, a_node->name , LEN_STR);
-   else                        strlcpy (x_name, "((-----))"  , LEN_STR);
-   COLOR_label (a_node, '-');
-   glPushMatrix    (); {
-      glTranslatef(x_lef + x_margin, -x_text,  20.0);
-      yFONT_print (txf_bg,  7, YF_MIDLEF, x_name);
-   } glPopMatrix   ();
-   /*---(complete)-----------------------*/
-   return 0;
-}
-
-char         /*===[[ draw a level of wedges ]]============[ ------ [ ------ ]=*/
-DRAW_taglist       (tNODE *a_base)
-{  /*---(local variables)--+-----------+-*/
-   char        rce         =  -10;
-   tNODE      *x_curr      = NULL;
-   int         c           =    0;
-   /*---(header)-------------------------*/
-   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
-   /*---(defense)------------------------*/
-   --rce;  if (a_base == NULL) {
-      DEBUG_GRAF   yLOG_warn    ("a_base NULL"   ,  "can not process");
-      DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-      return rce;
-   }
-   /*---(process siblings)---------------*/
-   x_curr = a_base->sib_head;
-   while (x_curr != NULL) {
-      DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
-      DRAW_tagentry  (c, x_curr);
-      x_curr = x_curr->sib_next;
-      ++c;
-   }
-   /*---(complete)-------------------------*/
-   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char
-DRAW_tags          (void)
-{
-   /*---(setup view)---------------------*/
-   glViewport      ( my.t_left, my.t_bott, my.t_wide, my.t_tall);
-   glMatrixMode    (GL_PROJECTION);
-   glLoadIdentity  ();
-   glOrtho         ( 0.0f, my.t_wide, -my.t_tall, 0.0,  -500.0,   500.0);
-   glMatrixMode    (GL_MODELVIEW);
-   /*---(background)---------------------*/
-   COLOR_back ();
-   glPushMatrix    (); {
-      glBegin         (GL_POLYGON); {
-         glVertex3f  (0.0f     , my.t_tall,  -20.0f);
-         glVertex3f  (my.t_wide, my.t_tall,  -20.0f);
-         glVertex3f  (my.t_wide, 0.0f     ,  -20.0f);
-         glVertex3f  (0.0f     , 0.0f     ,  -20.0f);
-      } glEnd   ();
-   } glPopMatrix   ();
-   /*---(tags)---------------------------*/
-   DRAW_taglist (g_bnode);
-   /*---(complete)-----------------------*/
-   return;
-}
-
 char
 DRAW_command       (void)
 {
@@ -483,8 +383,8 @@ DRAW_command       (void)
       glBegin         (GL_POLYGON); {
          glVertex3f  (0.0f     , my.c_tall,  0.0f);
          glVertex3f  (my.c_wide, my.c_tall,  0.0f);
-         glVertex3f  (my.c_wide, 0.0f      ,  0.0f);
-         glVertex3f  (0.0f     , 0.0f      ,  0.0f);
+         glVertex3f  (my.c_wide, 0.0f     ,  0.0f);
+         glVertex3f  (0.0f     , 0.0f     ,  0.0f);
       } glEnd   ();
    } glPopMatrix   ();
    /*---(text)---------------------------*/
@@ -504,13 +404,99 @@ DRAW_main          (void)
    glClear         (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    /*---(normal)-------------------------*/
    GRAPH_show      ();
-   DRAW_tags       ();
+   /*> DRAW_tags       ();                                                            <*/
    DRAW_command    ();
    DRAW_alts       ();
    /*---(send for processing)------------*/
    glXSwapBuffers  (DISP, BASE);
    glFlush         ();
    /*---(complete)-----------------------*/
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                       texture support                        ----===*/
+/*====================------------------------------------====================*/
+static void      o___TEXTURE_________________o (void) {;}
+
+char         /*--> create a new texture ------------------[ leaf-- [ ------ ]-*/
+TEX_new            (uint *a_tex, uint *a_fbo, uint *a_depth, int a_wide, int a_tall)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   /*---(header)-------------------------*/
+   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
+   /*---(generate fbo)-------------------*/
+   DEBUG_GRAF   yLOG_point   ("&a_fbo"    , a_fbo);
+   --rce;  if (a_fbo == NULL) {
+      DEBUG_GRAF   yLOG_note    ("can not be null");
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   glGenFramebuffersEXT         (1, a_fbo);
+   DEBUG_GRAF   yLOG_value   ("a_fbo"     , *a_fbo);
+   /*---(generate texture)---------------*/
+   DEBUG_GRAF   yLOG_point   ("&a_tex"    , a_tex);
+   --rce;  if (a_tex == NULL) {
+      DEBUG_GRAF   yLOG_note    ("can not be null");
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   glGenTextures                (1, a_tex);
+   DEBUG_GRAF   yLOG_value   ("a_tex"     , *a_tex);
+   /*---(generate depth)-----------------*/
+   DEBUG_GRAF   yLOG_point   ("&a_depth"  , a_depth);
+   --rce;  if (a_depth == NULL) {
+      DEBUG_GRAF   yLOG_note    ("can not be null");
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   glGenRenderbuffersEXT        (1, a_depth);
+   DEBUG_GRAF   yLOG_value   ("a_depth"   , *a_depth);
+   /*---(bind)---------------------------*/
+   DEBUG_GRAF   yLOG_info    ("bind"      , "a_fbo framebuffer and a_tex texture");
+   glBindFramebufferEXT         (GL_FRAMEBUFFER_EXT,  *a_fbo);
+   glBindTexture                (GL_TEXTURE_2D,       *a_tex);
+   /*---(settings)-----------------------*/
+   DEBUG_GRAF   yLOG_info    ("settings"  , "filters, wraps, and mipmaps");
+   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexEnvi                    (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+   glTexParameteri              (GL_TEXTURE_2D,  GL_GENERATE_MIPMAP, GL_TRUE);
+   /*---(copy)---------------------------*/
+   DEBUG_GRAF   yLOG_info    ("copy"      , "glTexImage2D and Framebuffer");
+   glTexImage2D                 (GL_TEXTURE_2D, 0, GL_RGBA, a_wide, a_tall, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+   glFramebufferTexture2DEXT    (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, *a_tex, 0);
+   /*---(depth)--------------------------*/
+   DEBUG_GRAF   yLOG_info    ("bind"      , "a_depth depth buffer");
+   glBindRenderbufferEXT        (GL_RENDERBUFFER_EXT, *a_depth);
+   glRenderbufferStorageEXT     (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, a_wide, a_tall);
+   glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, *a_depth);
+   /*---(unbind)-------------------------*/
+   DEBUG_GRAF   yLOG_info    ("unbind"    , "a_fbo framebuffer");
+   glBindFramebufferEXT         (GL_FRAMEBUFFER_EXT, 0);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char         /*--> free an existing texture --------------[ leaf-- [ ------ ]-*/
+TEX_free           (uint *a_tex, uint *a_fbo, uint *a_depth)
+{
+   DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
+   /*---(generate)-----------------------*/
+   glDeleteTextures             (1, a_tex);
+   DEBUG_GRAF   yLOG_svalue  ("a_tex"     , *a_tex);
+   glDeleteRenderbuffersEXT     (1, a_depth);
+   DEBUG_GRAF   yLOG_svalue  ("a_depth"   , *a_depth);
+   glDeleteFramebuffersEXT      (1, a_fbo);
+   DEBUG_GRAF   yLOG_svalue  ("a_fbo"     , *a_fbo);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
    return 0;
 }
 

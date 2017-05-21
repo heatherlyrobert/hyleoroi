@@ -4,74 +4,9 @@
 
 
 /*---(opengl objects)--------------------*/
-uint        s_tex       =     0;            /* texture for image              */
-uint        s_fbo       =     0;            /* framebuffer                    */
-uint        s_depth     =     0;            /* depth buffer                   */
-
-
-/*====================------------------------------------====================*/
-/*===----                      texture drawing                         ----===*/
-/*====================------------------------------------====================*/
-static void      o___TEXTURE_________________o (void) {;}
-
-char         /*===[[ create texture for drawing ]]========[ leaf   [ ------ ]=*/
-TEX_create         (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
-   /*---(generate)-----------------------*/
-   glGenFramebuffersEXT         (1, &s_fbo);
-   DEBUG_GRAF   yLOG_value   ("s_fbo"     , s_fbo);
-   glGenTextures                (1, &s_tex);
-   DEBUG_GRAF   yLOG_value   ("s_tex"     , s_tex);
-   glGenRenderbuffersEXT        (1, &s_depth);
-   DEBUG_GRAF   yLOG_value   ("s_depth"   , s_depth);
-   /*---(bind)---------------------------*/
-   DEBUG_GRAF   yLOG_info    ("bind"      , "s_fbo framebuffer and s_tex texture");
-   glBindFramebufferEXT         (GL_FRAMEBUFFER_EXT,  s_fbo);
-   glBindTexture                (GL_TEXTURE_2D,       s_tex);
-   /*---(settings)-----------------------*/
-   DEBUG_GRAF   yLOG_info    ("settings"  , "filters, wraps, and mipmaps");
-   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri              (GL_TEXTURE_2D,  GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   glTexEnvi                    (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-   glTexParameteri              (GL_TEXTURE_2D,  GL_GENERATE_MIPMAP, GL_TRUE);
-   /*---(copy)---------------------------*/
-   DEBUG_GRAF   yLOG_info    ("copy"      , "glTexImage2D and Framebuffer");
-   glTexImage2D                 (GL_TEXTURE_2D, 0, GL_RGBA, my.tex_w, my.tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-   glFramebufferTexture2DEXT    (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, s_tex, 0);
-   /*---(depth)--------------------------*/
-   DEBUG_GRAF   yLOG_info    ("bind"      , "s_depth depth buffer");
-   glBindRenderbufferEXT        (GL_RENDERBUFFER_EXT, s_depth);
-   glRenderbufferStorageEXT     (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, my.tex_w, my.tex_h);
-   glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, s_depth);
-   /*---(unbind)-------------------------*/
-   DEBUG_GRAF   yLOG_info    ("unbind"    , "s_fbo framebuffer");
-   glBindFramebufferEXT         (GL_FRAMEBUFFER_EXT, 0);
-   /*---(complete)-----------------------*/
-   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
-char         /*===[[ release texture ]]===================[ leaf   [ ------ ]=*/
-TEX_free           (void)
-{
-   /*---(header)-------------------------*/
-   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
-   /*---(generate)-----------------------*/
-   glDeleteTextures             (1, &s_tex);
-   DEBUG_GRAF   yLOG_value   ("s_tex"     , s_tex);
-   glDeleteRenderbuffersEXT     (1, &s_depth);
-   DEBUG_GRAF   yLOG_value   ("s_depth"   , s_depth);
-   glDeleteFramebuffersEXT      (1, &s_fbo);
-   DEBUG_GRAF   yLOG_value   ("s_fbo"     , s_fbo);
-   /*---(complete)-----------------------*/
-   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
-   return 0;
-}
-
+static uint s_tex       =     0;            /* texture for image              */
+static uint s_fbo       =     0;            /* framebuffer                    */
+static uint s_depth     =     0;            /* depth buffer                   */
 
 
 
@@ -361,15 +296,31 @@ DRAW_level         (
 char             /* [------] draw the texture contents -----------------------*/
 TEX_draw           (void)
 {  /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
    float       x_width     = my.tex_w  / 2.0;
    float       x_height    = my.tex_h  / 2.0;
    tNODE      *x_base      = NULL;
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
-   /*---(create objects)-----------------*/
-   DEBUG_GRAF   yLOG_note    ("texture handling");
-   TEX_free              ();
-   TEX_create            ();
+   /*---(free old texture)---------------*/
+   DEBUG_GRAF   yLOG_note    ("free existing texture");
+   rc = TEX_free              (&s_tex, &s_fbo, &s_depth);
+   DEBUG_GRAF   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_GRAF   yLOG_note    ("could not free");
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(create a new texture)-----------*/
+   DEBUG_GRAF   yLOG_note    ("create a new texture");
+   rc = TEX_new               (&s_tex, &s_fbo, &s_depth, my.tex_w, my.tex_h);
+   DEBUG_GRAF   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_GRAF   yLOG_note    ("could not create");
+      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(setup)--------------------------*/
    DEBUG_GRAF   yLOG_note    ("set for texture drawing");
    glViewport            (0.0,  0.0, my.tex_w, my.tex_h);

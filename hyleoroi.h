@@ -259,8 +259,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5k"
-#define     VER_TXT   "basic tag display is now in place, but slow"
+#define     VER_NUM   "v0.5l"
+#define     VER_TXT   "created shared TEX_new and TEX_free functions (wow)"
 
 
 
@@ -549,13 +549,16 @@ char        DRAW_node          (int a_level, tNODE *a_curr, char a_style);
 char        DRAW_level         (int a_level, tNODE *a_first, char a_recurse);
 char        DRAW_resize        (uint a_w, uint a_h);
 char        DRAW__radial_vals  (tNODE *a_node);
+/*---(texture)-----------------*/
+char        TEX_new            (uint *a_tex, uint *a_fbo, uint *a_depth, int a_wide, int a_tall);
+char        TEX_free           (uint *a_tex, uint *a_fbo, uint *a_depth);
 
 char        GRAPH_show         (void);
 
 
 /*---(texture)--------------*/
-char        TEX_free           (void);
-char        TEX_create         (void);
+/*> char        TEX_free           (void);                                            <* 
+ *> char        TEX_create         (void);                                            <*/
 char        TEX_draw           (void);
 char        TEX_show           (void);
 

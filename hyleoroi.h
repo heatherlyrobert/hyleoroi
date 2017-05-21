@@ -256,11 +256,12 @@
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
 #include    <yX11.h>         /* CUSTOM : heatherly xlib/glx setup             */
 #include    <yFONT.h>        /* CUSTOM : heatherly opengl texture-map fonts   */
+#include    <yGLTEX.h>       /* CUSTOM : heatherly opengl texture handling    */
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5l"
-#define     VER_TXT   "created shared TEX_new and TEX_free functions (wow)"
+#define     VER_NUM   "v0.5m"
+#define     VER_TXT   "moved TEX_new and TEX_free into yGLTEX (yessssss)"
 
 
 
@@ -556,11 +557,6 @@ char        TEX_free           (uint *a_tex, uint *a_fbo, uint *a_depth);
 char        GRAPH_show         (void);
 
 
-/*---(texture)--------------*/
-/*> char        TEX_free           (void);                                            <* 
- *> char        TEX_create         (void);                                            <*/
-char        TEX_draw           (void);
-char        TEX_show           (void);
 
 
 

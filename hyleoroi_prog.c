@@ -411,7 +411,7 @@ PROG_begin         (void)
    NODE_init    ();
    DRAW_window_sizes ();
    yXINIT_start (my.w_title, my.w_wide, my.w_tall, YX_FOCUSABLE, YX_FIXED, YX_SILENT);
-   /*> TEX_free     ();                                                               <*/
+   /*> yGLTEX_free  ();                                                               <*/
    FONT_load    ();
    DRAW_init    ();
    DRAW_resize  (my.w_wide, my.w_tall);
@@ -426,7 +426,7 @@ PROG_end           (void)
 {
    DEBUG_TOPS   yLOG_break   ();
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
-   /*> TEX_free     ();                                                               <*/
+   /*> yGLTEX_free  ();                                                               <*/
    FONT_unload  ();
    yXINIT_end   ();
    DEBUG_TOPS   yLOG_exit    (__FUNCTION__);

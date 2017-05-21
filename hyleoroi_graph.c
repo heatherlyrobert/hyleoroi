@@ -305,7 +305,7 @@ TEX_draw           (void)
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    /*---(free old texture)---------------*/
    DEBUG_GRAF   yLOG_note    ("free existing texture");
-   rc = TEX_free              (&s_tex, &s_fbo, &s_depth);
+   rc = yGLTEX_free           (&s_tex, &s_fbo, &s_depth);
    DEBUG_GRAF   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_GRAF   yLOG_note    ("could not free");
@@ -314,7 +314,7 @@ TEX_draw           (void)
    }
    /*---(create a new texture)-----------*/
    DEBUG_GRAF   yLOG_note    ("create a new texture");
-   rc = TEX_new               (&s_tex, &s_fbo, &s_depth, my.tex_w, my.tex_h);
+   rc = yGLTEX_new            (&s_tex, &s_fbo, &s_depth, my.tex_w, my.tex_h);
    DEBUG_GRAF   yLOG_value   ("rc"        , rc);
    --rce;  if (rc < 0) {
       DEBUG_GRAF   yLOG_note    ("could not create");

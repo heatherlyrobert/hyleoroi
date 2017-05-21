@@ -70,7 +70,8 @@ main               (int argc, char *argv[])
    NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
 
    /*---(drawing setup)------------------*/
-   TEX_draw     ();
+   GRAPH_init   ();
+   GRAPH_draw   ();
    NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
    DRAW_resize  (my.w_wide, my.w_tall);
    /*---(main)---------------------------*/

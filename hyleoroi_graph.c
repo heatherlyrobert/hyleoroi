@@ -22,6 +22,15 @@ static int   s_top      =    0;     /* vertical   beginning for shape   */
 static float s_mid      =  0.0;     /* vertical   placement for text    */
 static int   s_bot      =    0;     /* vertical   ending    for shape   */
 
+
+char
+GRAPH_init           (void)
+{
+   char        rc          = 0;
+   rc = yGLTEX_new            (&s_tex, &s_fbo, &s_depth, my.tex_w, my.tex_h);
+   return rc;
+}
+
 char         /*-> establish drawing outline --------------[ leaf   [ ------ ]-*/
 DRAW__radial_vals    (tNODE *a_node)
 {
@@ -294,7 +303,7 @@ DRAW_level         (
 }
 
 char             /* [------] draw the texture contents -----------------------*/
-TEX_draw           (void)
+GRAPH_draw         (void)
 {  /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;
    char        rc          =    0;
@@ -303,33 +312,8 @@ TEX_draw           (void)
    tNODE      *x_base      = NULL;
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
-   /*---(free old texture)---------------*/
-   DEBUG_GRAF   yLOG_note    ("free existing texture");
-   rc = yGLTEX_free           (&s_tex, &s_fbo, &s_depth);
-   DEBUG_GRAF   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_GRAF   yLOG_note    ("could not free");
-      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(create a new texture)-----------*/
-   DEBUG_GRAF   yLOG_note    ("create a new texture");
-   rc = yGLTEX_new            (&s_tex, &s_fbo, &s_depth, my.tex_w, my.tex_h);
-   DEBUG_GRAF   yLOG_value   ("rc"        , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_GRAF   yLOG_note    ("could not create");
-      DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
    /*---(setup)--------------------------*/
-   DEBUG_GRAF   yLOG_note    ("set for texture drawing");
-   glViewport            (0.0,  0.0, my.tex_w, my.tex_h);
-   glMatrixMode          (GL_PROJECTION);
-   glLoadIdentity        ();
-   glOrtho               (  -x_width,   x_width,  -x_height,   x_height, -500.0,  500.0);
-   glMatrixMode          (GL_MODELVIEW);
-   glBindTexture         (GL_TEXTURE_2D, 0);
-   glBindFramebufferEXT  (GL_FRAMEBUFFER_EXT,  s_fbo);
+   yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
    /*---(draw)---------------------------*/
    glClear               (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    g_bnode = NODE_find_name ("/usr/lib64");
@@ -342,11 +326,7 @@ TEX_draw           (void)
    else  g_bnode = g_hnode;
    DRAW_level  (0, g_bnode, 'y');
    /*---(mipmaps)------------------------*/
-   DEBUG_GRAF   yLOG_note    ("set for normal drawing");
-   glBindFramebufferEXT  (GL_FRAMEBUFFER_EXT, 0);
-   glBindTexture         (GL_TEXTURE_2D, s_tex);
-   glGenerateMipmapEXT   (GL_TEXTURE_2D);
-   glBindTexture         (GL_TEXTURE_2D, 0);
+   yGLTEX_draw_end  (s_tex);
    /*---(complete)-----------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
    return 0;

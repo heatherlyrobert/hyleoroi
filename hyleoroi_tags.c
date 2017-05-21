@@ -12,18 +12,43 @@ static uint s_depth     =     0;            /* depth buffer                   */
 
 
 
+/*====================------------------------------------====================*/
+/*===----                         program level                        ----===*/
+/*====================------------------------------------====================*/
+static void      o___PROGRAM_________________o (void) {;}
 
 char         /*--> set values for progress ticker --------[ ------ [ ------ ]-*/
 TAGS_init          (void)
 {
    int         i           = 0;
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
+   /*---(sizes)--------------------------*/
+   DEBUG_GRAF   yLOG_note    ("setting sizes (widths and heights)");
+   s_tall         = 4000;   /* max allowed single dimension */
+   s_wide         =  400;   /* wide enough for clever bits  */
+   /*---(working)------------------------*/
+   DEBUG_GRAF   yLOG_note    ("initializing working variables");
    /*---(generate)-----------------------*/
+   DEBUG_GRAF   yLOG_note    ("create a new texture");
    yGLTEX_new  (&s_tex, &s_fbo, &s_depth, s_wide, s_tall);
    /*---(complete)-----------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char         /*--> set values for progress ticker --------[ ------ [ ------ ]-*/
+TAGS_wrap          (void)
+{
+   /*---(header)-------------------------*/
+   DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
+   /*---(clear texture)------------------*/
+   DEBUG_GRAF   yLOG_note    ("free up texture");
+   yGLTEX_free (&s_tex, &s_fbo, &s_depth);
+   /*---(complete)-----------------------*/
+   DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
@@ -32,7 +57,7 @@ TAGS_init          (void)
 static void      o___TAGS____________________o (void) {;}
 
 char         /*===[[ draw a level of wedges ]]============[ ------ [ ------ ]=*/
-DRAW_tagentry      (int a_seq, tNODE *a_node)
+DRAW__show         (int a_seq, tNODE *a_node)
 {
    /*---(locals)-----------+-----------+-*/
    float       x_tall      = 10.0;
@@ -73,7 +98,7 @@ DRAW_tagentry      (int a_seq, tNODE *a_node)
 }
 
 char         /*===[[ draw a level of wedges ]]============[ ------ [ ------ ]=*/
-DRAW_taglist       (tNODE *a_base)
+DRAW__list         (tNODE *a_base)
 {  /*---(local variables)--+-----------+-*/
    char        rce         =  -10;
    tNODE      *x_curr      = NULL;
@@ -90,7 +115,7 @@ DRAW_taglist       (tNODE *a_base)
    x_curr = a_base->sib_head;
    while (x_curr != NULL) {
       DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
-      DRAW_tagentry  (c, x_curr);
+      DRAW__show  (c, x_curr);
       x_curr = x_curr->sib_next;
       ++c;
    }
@@ -119,7 +144,7 @@ DRAW_tags          (void)
       } glEnd   ();
    } glPopMatrix   ();
    /*---(tags)---------------------------*/
-   DRAW_taglist (g_bnode);
+   DRAW__list   (g_bnode);
    /*---(complete)-----------------------*/
    return;
 }

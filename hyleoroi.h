@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5m"
-#define     VER_TXT   "moved TEX_new and TEX_free into yGLTEX (yessssss)"
+#define     VER_NUM   "v0.5n"
+#define     VER_TXT   "moved TEX_start and TEX_end into yGLTEX (yessssss too)"
 
 
 
@@ -554,6 +554,8 @@ char        DRAW__radial_vals  (tNODE *a_node);
 char        TEX_new            (uint *a_tex, uint *a_fbo, uint *a_depth, int a_wide, int a_tall);
 char        TEX_free           (uint *a_tex, uint *a_fbo, uint *a_depth);
 
+char        GRAPH_init         (void);
+char        GRAPH_draw         (void);
 char        GRAPH_show         (void);
 
 

@@ -76,7 +76,7 @@ FILE_line          (void)
    int         i           =    0;
    int         x_len       =    0;          /* input record length            */
    char       *p           = NULL;          /* strtok_r current pointer       */
-   char       *q           = "";          /* strtok_r delimeters            */
+   char       *q           = "|";         /* strtok_r delimeters            */
    char       *r           = NULL;          /* strtok_r context variable      */
    char        x_recd      [LEN_RECD];
    /*---(header)-------------------------*/
@@ -340,6 +340,16 @@ FILE_main          (void)
          FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       default  :
+         strlcpy  (x_name, s_fields [0], LEN_FIELD);
+         strltrim (x_name, ySTR_TAIL, 200);
+         x_len = strlen (x_name);
+         strltrim (x_name, ySTR_HEAD, 200);
+         x_level = 1 + (x_len - strlen (x_name)) / 3;
+         x_value = atol (s_fields [1]);
+         x_count = atoi (s_fields [2]);
+         strlcpy  (x_desc, s_fields [3], LEN_FIELD);
+         strltrim (x_desc, ySTR_BOTH, 200);
+         FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       }
    }

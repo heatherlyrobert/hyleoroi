@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5q"
-#define     VER_TXT   "reads simple-format from helios"
+#define     VER_NUM   "v0.5r"
+#define     VER_TXT   "reads primative format from helios dirtree"
 
 
 

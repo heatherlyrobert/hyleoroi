@@ -10,7 +10,15 @@ tNODE      *g_bnode;
 
 
 
-char         /*===[[ prepare for program ]]===============[ ------ [ ------ ]=*/
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     program/system level                     ----===*/
+/*====================------------------------------------====================*/
+static void      o___PROGRAM_________________o (void) {;}
+
+char             /*=[ prepare for program use ]===========[ ------ [ ------ ]=*/
 NODE_init          (void)
 {
    g_hnode = NULL;
@@ -22,6 +30,15 @@ NODE_init          (void)
    strcpy (g_hnode->name, ROOT_DEF);
    return 0;
 }
+
+char             /*=[ prepare for program use ]===========[ ------ [ ------ ]=*/
+NODE_wrap          (void)
+{
+   return 0;
+}
+
+
+
 
 tNODE*       /*===[[ add a new node ]]====================[ ------ [ ------ ]=*/
 NODE_append        (

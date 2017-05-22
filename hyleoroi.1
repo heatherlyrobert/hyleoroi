@@ -65,52 +65,108 @@ complex data sets.
    -- no simple block diagrams that take too much space
    -- no output other that visual
 
-.SH OPTIONS
-
-.B color options.  
+.SH COLORS
 hyleoroi uses a large, max-contrast color palette borrowed from Tatarize at
 godsnotwheregodsnot.ru -- awesome and well conceived.  it was designed for
 the display of very large data sets.
 
-the default is a white background, very bright node colors filtered out,
+defaults are a white background, very bright node colors filtered out,
 and colors sequentially assigned from zero.  once the last color is used,
 assignments start at zero again.
 
-.B --white
+.B --color-white (:color-white)
 .RS 8
 white background, filters out very bright colors (default).
 .RE
 
-.B --light
+.B --color-light (:color-light)
 .RS 8
 light grey background, filters out more bright colors.
 .RE
 
-.B --black
+.B --color-black (:color-black)
 .RS 8
 black background, filters out very dark colors.
 .RE
 
-.B --dark
+.B --color-dark (:color-dark)
 .RS 8
 dark grey background, filters out more dark colors.
 .RE
 
-.B --color <n>
+.B --color-start <n> (:color-start <n>)
 .RS 8
 sets start color when drawing from root out, default is 0.
 .RE
 
-.B --ordered
+.B --color-ordered (:color-ordered)
 .RS 8
 colors are sequentialy assigned from start color.
 .RE
 
-.B --chaos
+.B --color-chaos (:color-chaos)
 .RS 8
 randomizes colors use rather than sequentially assigning.  when randomizing
 the value in --color is used as the randomization seed.  using the same
 start color will result in the same color assignments every time.
+.RE
+
+.SH HINTS
+hyleoroi uses short two-letter, alphabetic hints uniquely assigned to each
+node to enable rapid navigation through the tree structure.
+
+defaults are for hints to be sequentially assigned to nodes as they are read
+from the input file.  hints are assigned using [a-z][a-z], so starting at "aa"
+and proceding to "zz", then "}{" meaning unusable.
+
+.B --hint-global (:hint-global)
+.RS 8
+assigns hints as suggested in the detfaults
+.RE
+
+.B --hint-local (:hint-local)
+.RS 8
+assigns hints only to the current level in the tag window
+.RE
+
+.B --hint-leveled (:hint-leveled)
+.RS 8
+assigns hints by level, making them appear more rational
+.RE
+
+.B --hint-tiny (:hint-tiny)
+.RS 8
+cycles hints using [a-z] or 26 options
+.RE
+
+.B --hint-num (:hint-num)
+.RS 8
+cycles hints using [0-9][0-9] or 100 options
+.RE
+
+.B --hint-small (:hint-small)
+.RS 8
+cycles hints using [a-z][a-z] or 676 options
+.RE
+
+.B --hint-upper (:hint-upper)
+.RS 8
+cycles hints using [a-zA-Z][a-zA-Z] or 2,704 options
+.RE
+
+.B --hint-alnum (:hint-alnum)
+.RS 8
+cycles hints using [a-zA-Z0-9][a-zA-Z0-9] or 3,844 options
+.RE
+
+.B --hint-three (:hint-three)
+.RS 8
+cycles hints using [a-z][a-z][a-z] or 17,576 options
+.RE
+
+.B --hint-max (:hint-max)
+.RS 8
+cycles hints [a-zA-Z][a-zA-Z][a-zA-Z] or 140,608 options
 .RE
 
 .SH STDIN FORMAT

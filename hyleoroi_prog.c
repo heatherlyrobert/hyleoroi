@@ -336,9 +336,6 @@ PROG_args          (int argc, char *argv[])
       else if (strcmp (a, "--explode"           ) == 0) {
          if (i + 1 < argc) if (atof (argv [i + 1]) > 0 )  my.explode = atof (argv[++i]);
       }
-      else if (strcmp (a, "--cutoff"            ) == 0) {
-         if (i + 1 < argc) if (atof (argv [i + 1]) > 0 )  my.cutoff  = atof (argv[++i]);
-      }
       else if (strcmp (a, "--mime"              ) == 0) {
          my.type    = 'm';
       }
@@ -349,18 +346,17 @@ PROG_args          (int argc, char *argv[])
          my.node_dump    = 'y';
       }
       /*---(color options)---------------*/
-      else if (strcmp (a, "--white"             ) == 0)  COLOR_set_scheme (COLOR_WHITE);
-      else if (strcmp (a, "--light"             ) == 0)  COLOR_set_scheme (COLOR_LIGHT);
-      else if (strcmp (a, "--dark"              ) == 0)  COLOR_set_scheme (COLOR_DARK );
-      else if (strcmp (a, "--black"             ) == 0)  COLOR_set_scheme (COLOR_BLACK);
-      else if (strcmp (a, "--color"             ) == 0) {
+      else if (strcmp (a, "--color-white"       ) == 0)  COLOR_set_scheme (COLOR_WHITE);
+      else if (strcmp (a, "--color-light"       ) == 0)  COLOR_set_scheme (COLOR_LIGHT);
+      else if (strcmp (a, "--color-dark"        ) == 0)  COLOR_set_scheme (COLOR_DARK );
+      else if (strcmp (a, "--color-black"       ) == 0)  COLOR_set_scheme (COLOR_BLACK);
+      else if (strcmp (a, "--color-start"       ) == 0) {
          if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
       }
-      else if (strcmp (a, "--chaos"             ) == 0) {
-         my.chaos          = 'y';
-      }
-      else if (strcmp (a, "--ordered"           ) == 0) {
-         my.chaos          = '-';
+      else if (strcmp (a, "--color-chaos"       ) == 0)  my.chaos          = 'y';
+      else if (strcmp (a, "--color-ordered"     ) == 0)  my.chaos          = '-';
+      else if (strcmp (a, "--color-cutoff"      ) == 0) {
+         if (i + 1 < argc) if (atof (argv [i + 1]) > 0 )  my.cutoff  = atof (argv[++i]);
       }
    }
    /*---(display urgents)----------------*/
@@ -404,9 +400,15 @@ PROG_begin         (void)
       if (my.thick [i] == 0)  my.thick [i] = x_cum;
    }
    my.point     =   32;
+   /*> my.thick [0] =  200;                                                           <* 
+    *> my.thick [1] =  600;                                                           <* 
+    *> my.thick [2] = 1200;                                                           <*/
    my.thick [0] =  200;
-   my.thick [1] =  600;
-   my.thick [2] = 1200;
+   my.thick [1] =  400;
+   my.thick [2] =  600;
+   my.thick [3] =  800;
+   my.thick [4] = 1000;
+   my.thick [5] = 1200;
    COLOR_filter ();
    NODE_init    ();
    DRAW_window_sizes ();

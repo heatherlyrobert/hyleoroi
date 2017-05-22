@@ -96,7 +96,7 @@ DRAW__show         (int a_seq, tNODE *a_node)
    else if (a_node->pct <  0.001)  sprintf (x_size, "%-s", "");
    else                            sprintf (x_size, "%03d", (int) (a_node->pct * 1000));
    glPushMatrix    (); {
-      glColor4f   (0.0, 0.0, 0.0, 1.0);
+      COLOR_fore  ();
       glTranslatef(x_margin , -x_text,  20.0);
       yFONT_print (txf_bg, 16, YF_MIDLEF, a_node->hint);
       glTranslatef(x_hints  , 0.0    ,   0.0);

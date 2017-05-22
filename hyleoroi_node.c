@@ -139,11 +139,11 @@ NODE_show          (int a_level, tNODE *a_node)
    /*> if ((s_count % 25) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n\n");   <*/
    if ((s_count %  5) == 0)  printf ("                                                                                  ---size-------  ---count------  ---beg-----  ---pct-----  ---width---  ---end-----\n");
    sprintf (x_print, "%02d.%02d.%s%s", a_level, a_node->level, x_indent, a_node->name);
-   printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f  %3d\n",
+   printf ("%-80.80s  %14.0lf  %14.0lf  %11.6f  %11.6f  %11.6f  %11.6f  %3d  %s\n",
          x_print      ,
          a_node->size , a_node->size , a_node->beg  ,
          a_node->pct  , a_node->width, a_node->end  ,
-         a_node->color);
+         a_node->color, a_node->hint);
    ++s_count;
    return 0;
 }
@@ -459,7 +459,7 @@ NODE_process       (int a_level, tNODE *a_parent)
       x_beg          = x_child->end;
       x_total       += x_child->size;
       /*---(add hint)--------------------*/
-      if (x_child->width >= 2.0) {
+      if (x_child->hint [0] == '\0') {
          if (++(my.hint_minor) > 'z') {
             my.hint_minor = 'a';
             ++(my.hint_major);

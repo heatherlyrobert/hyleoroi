@@ -63,18 +63,21 @@ DRAW__show         (int a_seq, tNODE *a_node)
    float       x_tall      = 22.0;
    float       x_margin    = 10.0;
    float       x_spacer    =  5.0;
-   float       x_hints     = 40.0;
+   float       x_next      =  0.0;
+   float       x_hints     = 35.0;
    float       x_top       =  0.0;
    float       x_bot       =  0.0;
    float       x_lef       =  0.0;
    float       x_rig       =  0.0;
    float       x_text      =  0.0;
    char        x_name      [LEN_STR];
+   char        x_size      [LEN_STR];
    /*---(position)-----------------------*/
-   x_top  = x_margin + a_seq * (x_tall + x_spacer);
+   x_next = x_tall + x_spacer;
+   x_top  = x_margin + a_seq * x_next + (a_seq / 5) * x_next;
    x_bot  = x_top + x_tall;
-   x_lef  = x_margin + x_hints;
-   x_rig  = s_wide    - x_margin;
+   x_lef  = x_margin * 2.0 + x_hints * 2.0;
+   x_rig  = s_wide;
    x_text = x_top + (x_tall / 2.0);
    /*---(draw node)----------------------*/
    COLOR_node (a_node);
@@ -89,12 +92,17 @@ DRAW__show         (int a_seq, tNODE *a_node)
    /*---(draw text)----------------------*/
    if (a_node->label != NULL)  strlcpy (x_name, a_node->name , LEN_STR);
    else                        strlcpy (x_name, "((-----))"  , LEN_STR);
+   if      (a_node->pct == 1.00 )  sprintf (x_size, "%-s", "all");
+   else if (a_node->pct <  0.001)  sprintf (x_size, "%-s", "");
+   else                            sprintf (x_size, "%03d", (int) (a_node->pct * 1000));
    glPushMatrix    (); {
       glColor4f   (0.0, 0.0, 0.0, 1.0);
-      glTranslatef(x_lef - x_margin, -x_text,  20.0);
-      yFONT_print (txf_bg, 16, YF_MIDRIG, a_node->hint);
+      glTranslatef(x_margin , -x_text,  20.0);
+      yFONT_print (txf_bg, 16, YF_MIDLEF, a_node->hint);
+      glTranslatef(x_hints  , 0.0    ,   0.0);
+      yFONT_print (txf_bg, 16, YF_MIDLEF, x_size);
       COLOR_label (a_node, '-');
-      glTranslatef(x_margin * 2.0  ,  0.0   ,  20.0);
+      glTranslatef(x_hints + x_margin * 2.0, 0.0,   0.0);
       yFONT_print (txf_bg, 16, YF_MIDLEF, x_name);
    } glPopMatrix   ();
    /*---(complete)-----------------------*/
@@ -119,9 +127,11 @@ DRAW__list         (tNODE *a_base)
    x_curr = a_base->sib_head;
    while (x_curr != NULL) {
       DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
-      DRAW__show  (c, x_curr);
+      /*> if (x_curr->pct >= 0.001) {                                                 <*/
+         DRAW__show  (c, x_curr);
+         ++c;
+      /*> }                                                                           <*/
       x_curr = x_curr->sib_next;
-      ++c;
    }
    /*---(complete)-------------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);

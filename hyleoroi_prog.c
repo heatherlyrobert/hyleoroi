@@ -345,7 +345,7 @@ PROG_args          (int argc, char *argv[])
       else if (strcmp (a, "--dirtree"           ) == 0) {
          my.type    = 'd';
       }
-      else if (strcmp (a, "--node_dump"         ) == 0) {
+      else if (strcmp (a, "--node-dump"         ) == 0) {
          my.node_dump    = 'y';
       }
       /*---(color options)---------------*/

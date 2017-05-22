@@ -23,9 +23,9 @@ DRAW_window_sizes  (void)
    /*---(widths)-------------------------*/
    DEBUG_TOPS   yLOG_note    ("set window/panel widths");
    strcpy (my.w_title, "hyleoroi -- tree data structure visualization");
-   my.t_wide       =  225;
+   my.t_wide       =  300;     /* 225 */
    my.m_wide       =  700;
-   my.a_wide       =  200;
+   my.a_wide       =    0;     /* 200 */
    my.c_wide       = my.m_wide + my.a_wide;
    my.w_wide       = my.t_wide + my.c_wide;
    /*---(lefts)--------------------------*/
@@ -36,7 +36,7 @@ DRAW_window_sizes  (void)
    /*---(talls)--------------------------*/
    DEBUG_TOPS   yLOG_note    ("set window/panel heights");
    my.m_tall       =  700;
-   my.c_tall       =   20;
+   my.c_tall       =    0;   /* 20 */
    my.a_tall       = my.m_tall;
    my.w_tall       = my.t_tall = my.m_tall + my.c_tall;
    /*---(bottoms)------------------------*/
@@ -44,11 +44,11 @@ DRAW_window_sizes  (void)
    my.t_bott       = my.c_bott =   0;  
    my.m_bott       = my.a_bott = my.c_tall;
    /*---(output)----------------------*/
-   printf ("tags    : %4dx %4dy, %4dw %4dh\n", my.t_left, my.t_bott, my.t_wide, my.t_tall);
-   printf ("main    : %4dx %4dy, %4dw %4dh\n", my.m_left, my.m_bott, my.m_wide, my.m_tall);
-   printf ("cmds    : %4dx %4dy, %4dw %4dh\n", my.c_left, my.c_bott, my.c_wide, my.c_tall);
-   printf ("alts    : %4dx %4dy, %4dw %4dh\n", my.a_left, my.a_bott, my.a_wide, my.a_tall);
-   printf ("full    : %4dx %4dy, %4dw %4dh\n", 0        , 0        , my.w_wide, my.w_tall);
+   /*> printf ("tags    : %4dx %4dy, %4dw %4dh\n", my.t_left, my.t_bott, my.t_wide, my.t_tall);   <* 
+    *> printf ("main    : %4dx %4dy, %4dw %4dh\n", my.m_left, my.m_bott, my.m_wide, my.m_tall);   <* 
+    *> printf ("cmds    : %4dx %4dy, %4dw %4dh\n", my.c_left, my.c_bott, my.c_wide, my.c_tall);   <* 
+    *> printf ("alts    : %4dx %4dy, %4dw %4dh\n", my.a_left, my.a_bott, my.a_wide, my.a_tall);   <* 
+    *> printf ("full    : %4dx %4dy, %4dw %4dh\n", 0        , 0        , my.w_wide, my.w_tall);   <*/
    /*---(complete)--------------------*/
    DEBUG_TOPS   yLOG_exit    (__FUNCTION__);
    return 0;

@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5o"
-#define     VER_TXT   "basic tags working as a texture now"
+#define     VER_NUM   "v0.5p"
+#define     VER_TXT   "sizes and five-row spacing in tag window"
 
 
 

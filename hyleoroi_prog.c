@@ -400,16 +400,17 @@ PROG_begin         (void)
       if (my.thick [i] == 0)  my.thick [i] = x_cum;
    }
    my.point     =   32;
-   /*> my.thick [0] =  200;                                                           <* 
-    *> my.thick [1] =  600;                                                           <* 
-    *> my.thick [2] = 1200;                                                           <*/
    my.thick [0] =  200;
-   my.thick [1] =  400;
-   my.thick [2] =  600;
-   my.thick [3] =  800;
-   my.thick [4] = 1000;
-   my.thick [5] = 1200;
-   strcpy (my.tdesc, "7-level dirtree");
+   my.thick [1] =  600;
+   my.thick [2] = 1200;
+   strcpy (my.tdesc, "3-level explosion");
+   /*> my.thick [0] =  200;                                                           <* 
+    *> my.thick [1] =  400;                                                           <* 
+    *> my.thick [2] =  600;                                                           <* 
+    *> my.thick [3] =  800;                                                           <* 
+    *> my.thick [4] = 1000;                                                           <* 
+    *> my.thick [5] = 1200;                                                           <*/
+   /*> strcpy (my.tdesc, "7-level dirtree");                                          <*/
    strcpy (my.fdesc, "radial/sunburst");
    COLOR_filter ();
    NODE_init    ();

@@ -198,11 +198,14 @@ PROG_event         (void)
    long        x_dur       =    0;          /* update duration                */
    char        x_quit      =  '-';          /* flag to quit                   */
    char        x_active    =  'y';          /* flag if visual moving/active   */
+   char        x_tcurr     =    0;
+   int         x_tbot      =    0;
    /*---(main loop)----------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    DRAW_main   ();
    /*---(processing loop)----------------*/
    while (x_quit == '-') {
+      x_tcurr = my.t_curr;
       while (XPending(DISP)) {
          XNextEvent(DISP, &EVNT);
          /*---(start)----------------------------*/
@@ -234,6 +237,10 @@ PROG_event         (void)
             case ')': my.inc     = STOP;      my.angle -=  20.0;    break;
             case '}': my.inc     = STOP;      my.angle -=  90.0;    break;
             case ']': my.inc     = STOP;      my.angle  =   0.0;    break;
+            case 'K': my.t_curr -= 5;                               break;
+            case 'k': --my.t_curr;                                  break;
+            case 'j': ++my.t_curr;                                  break;
+            case 'J': my.t_curr += 5;                               break;
             /*> case 'i':                         my.zdist -=  20.0;    break;        <* 
              *> case 'I':                         my.zdist -= 100.0;    break;        <* 
              *> case 'o':                         my.zdist +=  20.0;    break;        <* 
@@ -274,6 +281,11 @@ PROG_event         (void)
       if (my.angle > 360.0) my.angle  = my.angle - 360.0 + my.inc;
       if (my.angle <   0.0) my.angle  = my.angle + 360.0 - my.inc;
       /*---(update)----------------------*/
+      x_tbot = ((my.t_shown / 5) - 7) * 5;
+      printf ("%4d  %4d  %4d  %4d  %4d\n", my.t_shown, my.t_shown / 5, (my.t_shown / 5) - 7, x_tbot, my.t_curr);
+      if (my.t_curr < 0     )  my.t_curr = 0;
+      if (my.t_curr > x_tbot)  my.t_curr = x_tbot;
+      if (x_tcurr != my.t_curr)  TAGS_draw ();
       x_beg = TIME_stamp();
       DRAW_main   ();
       /*> DRAW_direct ();                                                             <*/

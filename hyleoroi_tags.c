@@ -28,6 +28,7 @@ TAGS_init          (void)
    s_tall         = my.t_tall * 4;  /* max allowed single dimension */
    /*---(working)------------------------*/
    DEBUG_GRAF   yLOG_note    ("initializing working variables");
+   my.t_curr      = 0;
    /*---(generate)-----------------------*/
    DEBUG_GRAF   yLOG_note    ("create a new texture");
    yGLTEX_new  (&s_tex, &s_fbo, &s_depth, s_wide, s_tall);
@@ -110,7 +111,7 @@ DRAW__show         (int a_seq, tNODE *a_node)
 }
 
 char         /*===[[ draw a level of wedges ]]============[ ------ [ ------ ]=*/
-DRAW__list         (tNODE *a_base)
+DRAW__list         (tNODE *a_base, int a_start)
 {  /*---(local variables)--+-----------+-*/
    char        rce         =  -10;
    tNODE      *x_curr      = NULL;
@@ -127,10 +128,14 @@ DRAW__list         (tNODE *a_base)
    x_curr = a_base->sib_head;
    while (x_curr != NULL) {
       DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
-      /*> if (x_curr->pct >= 0.001) {                                                 <*/
-         DRAW__show  (c, x_curr);
-         ++c;
-      /*> }                                                                           <*/
+      if (x_curr->pct >= 0.001) {
+         if (my.t_shown >= a_start) {
+            DRAW__show   (c, x_curr);
+            ++c;
+         }
+         ++my.t_shown;
+      }
+      ++my.t_count;
       x_curr = x_curr->sib_next;
    }
    /*---(complete)-------------------------*/
@@ -159,7 +164,9 @@ TAGS_draw          (void)
       } glEnd   ();
    } glPopMatrix   ();
    /*---(draw)---------------------------*/
-   rc = DRAW__list          (g_bnode);
+   my.t_count = 0;
+   my.t_shown = 0;
+   rc = DRAW__list          (g_bnode, my.t_curr);
    /*---(mipmaps)------------------------*/
    rc = yGLTEX_draw_end     (s_tex);
    /*---(complete)-----------------------*/

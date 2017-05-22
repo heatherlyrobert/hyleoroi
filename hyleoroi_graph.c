@@ -313,15 +313,15 @@ GRAPH_draw         (void)
    /*---(setup)--------------------------*/
    rc = yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
    /*---(draw)---------------------------*/
-   /*> g_bnode = NODE_find_name ("/usr/lib64");                                       <*/
-   g_bnode = g_hnode;
-   /*> if (g_bnode != NULL) {                                                         <* 
-    *>    NODE_level      (0, g_bnode);                                               <* 
-    *>    NODE_size_purge ();                                                         <* 
-    *>    NODE_resize     (0, g_bnode);                                               <* 
-    *>    DRAW_level      (0, g_bnode, 'y');                                          <* 
-    *> }                                                                              <* 
-    *> else  g_bnode = g_hnode;                                                       <*/
+   g_bnode = NODE_find_name ("music_clean");
+   /*> g_bnode = g_hnode;                                                             <*/
+   if (g_bnode != NULL) {
+      NODE_level      (0, g_bnode);
+      NODE_size_purge ();
+      NODE_resize     (0, g_bnode);
+      DRAW_level      (0, g_bnode, 'y');
+   }
+   else  g_bnode = g_hnode;
    rc = DRAW_level  (0, g_bnode, 'y');
    /*---(mipmaps)------------------------*/
    rc = yGLTEX_draw_end  (s_tex);
@@ -397,6 +397,12 @@ TEX_show           (void)
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);
       glTranslatef(   0.0,  -14.0,    0.0);
       sprintf (t, "max depth %d", my.max_depth);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
+      glTranslatef(   0.0,  -14.0,    0.0);
+      sprintf (t, "level %d", my.t_count);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, t);
+      glTranslatef(   0.0,  -14.0,    0.0);
+      sprintf (t, "shown %d", my.t_shown);
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);
    } glPopMatrix();
    /*---(graph)-----------------------------*/

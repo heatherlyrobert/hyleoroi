@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5t"
-#define     VER_TXT   "show debug_mode in addidion to red with debugging"
+#define     VER_NUM   "v0.6a"
+#define     VER_TXT   "got scroll up and down working on tag list"
 
 
 
@@ -386,6 +386,9 @@ struct cGLOBAL {
    int         t_left;                      /* left   of tag panel            */
    int         t_tall;                      /* height of tag panel            */
    int         t_bott;                      /* bottom of tag panel            */
+   int         t_curr;                      /* current topmost entry          */
+   int         t_count;                     /* count of entries at level      */
+   int         t_shown;                     /* count of shown entries         */
    /*---(command window)--*/
    int         c_wide;                      /* width  of command line         */
    int         c_left;                      /* left   of command line         */

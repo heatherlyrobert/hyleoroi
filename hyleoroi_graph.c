@@ -313,15 +313,15 @@ GRAPH_draw         (void)
    /*---(setup)--------------------------*/
    rc = yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
    /*---(draw)---------------------------*/
-   g_bnode = NODE_find_name ("/usr/lib64");
-   /*> g_bnode = g_hnode;                                                             <*/
-   if (g_bnode != NULL) {
-      NODE_level      (0, g_bnode);
-      NODE_size_purge ();
-      NODE_resize     (0, g_bnode);
-      DRAW_level      (0, g_bnode, 'y');
-   }
-   else  g_bnode = g_hnode;
+   /*> g_bnode = NODE_find_name ("/usr/lib64");                                       <*/
+   g_bnode = g_hnode;
+   /*> if (g_bnode != NULL) {                                                         <* 
+    *>    NODE_level      (0, g_bnode);                                               <* 
+    *>    NODE_size_purge ();                                                         <* 
+    *>    NODE_resize     (0, g_bnode);                                               <* 
+    *>    DRAW_level      (0, g_bnode, 'y');                                          <* 
+    *> }                                                                              <* 
+    *> else  g_bnode = g_hnode;                                                       <*/
    rc = DRAW_level  (0, g_bnode, 'y');
    /*---(mipmaps)------------------------*/
    rc = yGLTEX_draw_end  (s_tex);

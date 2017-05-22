@@ -151,8 +151,8 @@ FILE_verb          (void)
    DEBUG_INPT   yLOG_info    ("s_fields 0", s_fields [0]);
    --rce;  if (s_fields [0][0] == ' ') {
       DEBUG_INPT   yLOG_note    ("initial space, so no verb");
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
+      DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+      return 0;
    }
    /*---(isolate verb)-------------------*/
    strlcpy  (s_verb, s_fields [0], LEN_FIELD);
@@ -328,6 +328,16 @@ FILE_main          (void)
          FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       case 'S' :
+         strlcpy  (x_name, s_fields [0], LEN_FIELD);
+         strltrim (x_name, ySTR_TAIL, 200);
+         x_len = strlen (x_name);
+         strltrim (x_name, ySTR_HEAD, 200);
+         x_level = 1 + (x_len - strlen (x_name)) / 3;
+         x_value = atol (s_fields [1]);
+         x_count = atoi (s_fields [2]);
+         strlcpy  (x_desc, s_fields [3], LEN_FIELD);
+         strltrim (x_desc, ySTR_BOTH, 200);
+         FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       default  :
          break;

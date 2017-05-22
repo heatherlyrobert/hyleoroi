@@ -234,18 +234,18 @@ PROG_event         (void)
             case ')': my.inc     = STOP;      my.angle -=  20.0;    break;
             case '}': my.inc     = STOP;      my.angle -=  90.0;    break;
             case ']': my.inc     = STOP;      my.angle  =   0.0;    break;
-            case 'i':                         my.zdist -=  20.0;    break;
-            case 'I':                         my.zdist -= 100.0;    break;
-            case 'o':                         my.zdist +=  20.0;    break;
-            case 'O':                         my.zdist += 100.0;    break;
-            case 'k':                         my.ydist -=   5.0;    break;
-            case 'K':                         my.ydist -=  20.0;    break;
-            case 'j':                         my.ydist +=   5.0;    break;
-            case 'J':                         my.ydist +=  20.0;    break;
-            case 'l':                         my.xdist -=   5.0;    break;
-            case 'L':                         my.xdist -=  20.0;    break;
-            case 'h':                         my.xdist +=   5.0;    break;
-            case 'H':                         my.xdist +=  20.0;    break;
+            /*> case 'i':                         my.zdist -=  20.0;    break;        <* 
+             *> case 'I':                         my.zdist -= 100.0;    break;        <* 
+             *> case 'o':                         my.zdist +=  20.0;    break;        <* 
+             *> case 'O':                         my.zdist += 100.0;    break;        <*/
+            /*> case 'k':                         my.ydist -=   5.0;    break;        <* 
+             *> case 'K':                         my.ydist -=  20.0;    break;        <* 
+             *> case 'j':                         my.ydist +=   5.0;    break;        <* 
+             *> case 'J':                         my.ydist +=  20.0;    break;        <* 
+             *> case 'l':                         my.xdist -=   5.0;    break;        <* 
+             *> case 'L':                         my.xdist -=  20.0;    break;        <* 
+             *> case 'h':                         my.xdist +=   5.0;    break;        <* 
+             *> case 'H':                         my.xdist +=  20.0;    break;        <*/
                                               /*> case '0': my.xdist = 0.0; my.ydist = 0.0; my.zdist =  980.0;  mask_small(); break;    <* 
                                                *> case '1': my.xdist = 0.0; my.ydist = 0.0; my.zdist =  550.0;  mask_small(); break;    <* 
                                                *> case '2': my.xdist = 0.0; my.ydist = 0.0; my.zdist =  660.0;  mask_med();    break;   <* 

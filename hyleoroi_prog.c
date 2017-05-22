@@ -409,6 +409,8 @@ PROG_begin         (void)
    my.thick [3] =  800;
    my.thick [4] = 1000;
    my.thick [5] = 1200;
+   strcpy (my.tdesc, "7-level dirtree");
+   strcpy (my.fdesc, "radial/sunburst");
    COLOR_filter ();
    NODE_init    ();
    DRAW_window_sizes ();

@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.5s"
-#define     VER_TXT   "update color options, display, and color in man file"
+#define     VER_NUM   "v0.5t"
+#define     VER_TXT   "show debug_mode in addidion to red with debugging"
 
 
 

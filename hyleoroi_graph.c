@@ -351,10 +351,11 @@ TEX_show           (void)
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi (forest watchers)");
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree structure visualization");
-      glTranslatef(  30.0,  -14.0,    0);
-      sprintf (t, "[%s]", VER_NUM);
+      glTranslatef(  25.0,  -14.0,    0);
+      if (debug.tops == 'y')  sprintf (t, "[%s] debug_mode", VER_NUM);
+      else                    sprintf (t, "[%s]", VER_NUM);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
-      glTranslatef( -30.0,    0.0,    0);
+      glTranslatef( -25.0,    0.0,    0);
       glRotatef(-90.0, 0.0, 0.0, 1.0);
       glTranslatef(   2.0,   10.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, my.tdesc);

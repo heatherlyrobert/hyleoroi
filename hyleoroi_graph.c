@@ -21,6 +21,7 @@ static int   s_end      =    0;     /* horizontal ending    for shape   */
 static int   s_top      =    0;     /* vertical   beginning for shape   */
 static float s_mid      =  0.0;     /* vertical   placement for text    */
 static int   s_bot      =    0;     /* vertical   ending    for shape   */
+static char  s_label    =  'l';
 
 
 char
@@ -46,7 +47,7 @@ DRAW__radial_vals    (tNODE *a_node)
    }
    /*---(set node values)----------------*/
    s_beg   = 0;
-   s_end   = my.thick [a_node->level];
+   s_end   = my.ring_thick [a_node->level];
    s_top   = a_node->beg * 10;
    s_bot   = a_node->end * 10;
    /*---(text placement)-----------------*/
@@ -54,7 +55,8 @@ DRAW__radial_vals    (tNODE *a_node)
    if (a_node->level == 0)  s_mid   =  0.0;
    else                     s_mid   = -(s_mid) + 90.0;
    if (a_node->level == 0)  s_cen   =  0.0;
-   else                     s_cen   = my.thick [a_node->level - 1] + 10.0;
+   else                     s_cen   = my.ring_thick [a_node->level - 1] + 10.0;
+   s_label = my.ring_label [a_node->level];
    /*---(report)-------------------------*/
    DEBUG_GRAF   yLOG_svalue  ("s_beg/in"  , s_beg);
    DEBUG_GRAF   yLOG_svalue  ("s_end/out" , s_end);
@@ -62,6 +64,7 @@ DRAW__radial_vals    (tNODE *a_node)
    DEBUG_GRAF   yLOG_svalue  ("s_bot/end" , s_bot);
    DEBUG_GRAF   yLOG_complex ("s_mid"     , "%8.3f", s_mid);
    DEBUG_GRAF   yLOG_complex ("s_cen"     , "%8.3f", s_cen);
+   DEBUG_GRAF   yLOG_svalue  ("s_label"   , s_label);
    /*---(complete)-----------------------*/
    DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
    return 0;
@@ -172,6 +175,7 @@ DRAW__radial_text    (tNODE *a_node, char a_style)
    char        rce         =  -10;
    char        rc          =    0;
    char        x_text      [100] = "";
+   char        x_align     = YF_MIDCEN;
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_senter  (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -191,25 +195,29 @@ DRAW__radial_text    (tNODE *a_node, char a_style)
       COLOR_label   (a_node, a_style);
       glRotatef   (s_mid, 0.0, 0.0, 1.0);
       glTranslatef(s_cen, 0.0, 0.0);
-      if (my.hints == 'y') { 
-         glTranslatef(-s_cen, 0.0, 0.0);
-         glRotatef   (-2.0, 0.0, 0.0, 1.0);
-         glTranslatef(s_cen, 0.0, 0.0);
-         yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->label);
-         glTranslatef(-s_cen, 0.0, 0.0);
-         /*> glRotatef   (1.0 + (6.0 - a_node->level) * 1.0, 0.0, 0.0, 1.0);    <*/
-         glRotatef   (+6.0 - (a_node->level * 0.8), 0.0, 0.0, 1.0);
-         glTranslatef(s_cen, 0.0, 0.0);
-         yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->hint);
-         /*> sprintf (x_text, "%s.%s", a_node->hint, a_node->label);            <* 
-          *> yFONT_print (txf_bg, 12, YF_MIDLEF, x_text);                       <*/
-      } else {
-         if (a_node->level == 0)
-            yFONT_print (txf_bg, my.point, YF_MIDCEN, a_node->name );
-         else 
-            if (my.type   == 'm') yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->desc);
-            else                  yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->name);
-      }
+      if (a_node->level == 0)   x_align = YF_MIDCEN;
+      else                      x_align = YF_MIDLEF;
+      if (s_label  == 'd') yFONT_print (txf_bg, my.point, x_align, a_node->desc);
+      else                 yFONT_print (txf_bg, my.point, x_align, a_node->name);
+      /*> if (my.hints == 'y') {                                                                <* 
+       *>    glTranslatef(-s_cen, 0.0, 0.0);                                                    <* 
+       *>    glRotatef   (-2.0, 0.0, 0.0, 1.0);                                                 <* 
+       *>    glTranslatef(s_cen, 0.0, 0.0);                                                     <* 
+       *>    yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->label);                          <* 
+       *>    glTranslatef(-s_cen, 0.0, 0.0);                                                    <* 
+       *>    /+> glRotatef   (1.0 + (6.0 - a_node->level) * 1.0, 0.0, 0.0, 1.0);    <+/         <* 
+       *>    glRotatef   (+6.0 - (a_node->level * 0.8), 0.0, 0.0, 1.0);                         <* 
+       *>    glTranslatef(s_cen, 0.0, 0.0);                                                     <* 
+       *>    yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->hint);                           <* 
+       *>    /+> sprintf (x_text, "%s.%s", a_node->hint, a_node->label);            <*          <* 
+       *>     *> yFONT_print (txf_bg, 12, YF_MIDLEF, x_text);                       <+/         <* 
+       *> } else {                                                                              <* 
+       *>    if (a_node->level == 0)                                                            <* 
+       *>       yFONT_print (txf_bg, my.point, YF_MIDCEN, a_node->name );                       <* 
+       *>    else                                                                               <* 
+       *>       if (s_label  != 'l') yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->desc);   <* 
+       *>       else                 yFONT_print (txf_bg, my.point, YF_MIDLEF, a_node->name);   <* 
+       *> }                                                                                     <*/
    } glPopMatrix();
    /*---(complete)----------------------*/
    DEBUG_GRAF   yLOG_sexit   (__FUNCTION__);
@@ -351,16 +359,18 @@ TEX_show           (void)
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi (forest watchers)");
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree structure visualization");
-      glTranslatef(  25.0,  -14.0,    0);
-      if (debug.tops == 'y')  sprintf (t, "[%s] debug_mode", VER_NUM);
-      else                    sprintf (t, "[%s]", VER_NUM);
+      glTranslatef(  42.0,  -14.0,    0);
+      if (debug.tops == 'y')  sprintf (t, "[%s] debug", VER_NUM);
+      else                    sprintf (t, "[%s] normal", VER_NUM);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
-      glTranslatef( -25.0,    0.0,    0);
+      glTranslatef( -42.0,    0.0,    0);
       glRotatef(-90.0, 0.0, 0.0, 1.0);
-      glTranslatef(   2.0,   10.0,    0);
+      glTranslatef(   0.0,   12.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, my.tdesc);
       glTranslatef(   0.0,   18.0,    0);
       yFONT_print (txf_bg, 14, YF_TOPLEF, my.fdesc);
+      glTranslatef(   0.0,   12.0,    0);
+      yFONT_print (txf_bg, 10, YF_TOPLEF, my.fentry);
    } glPopMatrix();
    glPushMatrix(); {
       COLOR_fore ();

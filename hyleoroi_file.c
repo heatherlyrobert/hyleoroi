@@ -235,7 +235,7 @@ FILE_node          (int a_level, char *a_name, long a_value, int a_count, char *
    strlcpy (x_curr->name , a_name,  50);
    x_curr->size  = a_value;
    x_curr->count = a_count;
-   strlcpy (x_curr->desc , a_name, 200);
+   strlcpy (x_curr->desc , a_desc, 200);
    /*---(assign color)----------------*/
    x_curr->level    = a_level;
    if (my.chaos == 'y')   x_curr->color = rand_r (&(my.color_seed)) % g_ncolor;

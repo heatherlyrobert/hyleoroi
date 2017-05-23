@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6c"
-#define     VER_TXT   "format updated for the current use cases (hermes,helios)"
+#define     VER_NUM   "v0.6e"
+#define     VER_TXT   "fix up screen titles, add format name too"
 
 
 
@@ -307,6 +307,7 @@ extern      tNODE      *g_bnode;
 
 
 
+#define     MAX_COLOR   400
 typedef     struct      cCOLOR      tCOLOR;
 struct      cCOLOR {
    float       red;
@@ -314,7 +315,7 @@ struct      cCOLOR {
    float       blu;
    float       bri;
 };
-extern      tCOLOR      g_colors [400];
+extern      tCOLOR      g_colors [MAX_COLOR];
 extern      int         g_ncolor;
 extern      int         g_acolor;
 
@@ -343,8 +344,10 @@ extern      int         g_nlayer;
 typedef     struct      cFORMAT      tFORMAT;
 struct cFORMAT {
    /*---(names)-------------*/
-   char        name        [15];            /* identification for finding     */
-   char        format      [25];            /* identification for finding     */
+   char        name        [10];            /* identification for finding     */
+   char        formal      [20];            /* identification for finding     */
+   /*---(descriptions)------*/
+   char        format      [30];            /* identification for finding     */
    char        desc        [60];            /* identification for finding     */
    /*---(layers)------------*/
    char        layer_names [MAX_RING][15];
@@ -352,6 +355,7 @@ struct cFORMAT {
    int         levels;
    int         layers      [MAX_RING];
    float       cums        [MAX_RING];
+   char        labels      [MAX_RING];
    char        valid;
    /*---(done)--------------*/
 };
@@ -381,6 +385,7 @@ struct cGLOBAL {
    char        type;                   /* mime, dirtree, etc                  */
    char        format;                 /* radial, block, etc                  */
    double      full_size;              /* full size of graph (arc or length)  */
+   char        fentry      [100];      /* format title                        */
    char        fdesc       [100];      /* format title                        */
    char        tdesc       [100];      /* type title                          */
    char        label       [ 10];      /* node title flags                    */
@@ -426,7 +431,8 @@ struct cGLOBAL {
    /*---(sizing)-------------------------*/
    int         ring;
    int         point;
-   int         thick       [MAX_RING];
+   int         ring_thick  [MAX_RING];
+   char        ring_label  [MAX_RING];
    /*---(action)-------------------------*/
    float       single;
    float       angle;
@@ -634,6 +640,7 @@ char        FORMAT_init        (void);
 int         FORMAT_find_format (char *a_name);
 int         FORMAT_find_layer  (char *a_name);
 float       FORMAT_get_radius  (int   a_layer);
+char        FORMAT_get_label   (int   a_layer);
 char        FORMAT_dump_formats   (void);
 char        FORMAT_set         (char *a_name);
 

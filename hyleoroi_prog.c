@@ -263,9 +263,6 @@ PROG_init          (void)
    my.hints       =  '-';
    my.ring        =  170;
    my.point       =   24;
-   for (i = 0; i < MAX_RING; ++i) {
-      my.thick [i] = my.ring * (1 + i);
-   }
    my.full_size   =   360;
    my.type        = '-';
    my.format      = 'r';
@@ -364,7 +361,7 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   FORMAT_set     ("hermes");
+   FORMAT_set     ("mimecat");
    DRAW_globals   ();
    COLOR_filter   ();
    NODE_init      ();

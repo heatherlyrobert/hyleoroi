@@ -2,12 +2,12 @@
 #include    "hyleoroi.h"     /* LOCAL  : main header                          */
 
 
-tCOLOR      g_colors [400];
+tCOLOR      g_colors [MAX_COLOR];
 int         g_ncolor;
 int         g_acolor;
 
 
-static char s_scheme [400][10] =
+static char s_scheme [MAX_COLOR][10] =
 {  /* colors taken from Tatarize at "godsnotwheregodsnot.ru" */
 
    "#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
@@ -136,7 +136,7 @@ COLOR_filter       (void)
       else                      my.color_seed  = my.color_start;
    }
    /*---(establish values)---------------*/
-   for (i = 0; i < 400; ++i) {
+   for (i = 0; i < MAX_COLOR; ++i) {
       /*---(filter)----------------------*/
       if (s_scheme [i][0] == '-')  break;
       /*---(read scheme)-----------------*/

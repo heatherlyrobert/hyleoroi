@@ -14,18 +14,6 @@ float       my_sin [4000];
 float       my_cos [4000];
 
 
-tFORMAT     g_formats [MAX_FORMAT];
-/*> tFORMAT     g_formats [MAX_FORMAT] = {                                                                                                                                       <* 
- *>    /+  type, format,   full, cutoff, point, -ring, --0--, --1--, --2--, --3--, --4--, --5--, --6--,  ---tdesc----------------------,  ---fdesc--   -label-  ghost empty +/   <* 
- *>    {    'm',    'r',    360,      2,    32,   180,   200,   400,  1200,     0,     0,     0,     0, "mime two-layer"               , "radial"   , "--d----", 'y' , 'y'  },   <* 
- *>    {    'm',    'b',   2000,      2,    32,   290,   400,   600,  2000,     0,     0,     0,     0, "mime two-layer"               , "block"    , "--d----", 'y' , 'y'  },   <* 
- *>    {    'd',    'r',    360,      7,    24,   170,     0,     0,     0,     0,     0,     0,     0, "dirtree seven layer"          , "radial"   , "-------", 'y' , '-'  },   <* 
- *>    {    'd',    'b',   2000,      7,    16,   290,     0,     0,     0,     0,     0,     0,     0, "dirtree seven layer"          , "block"    , "-------", 'y' , '-'  },   <* 
- *>    {    '-',    'r',    360,      7,    16,   170,     0,     0,     0,     0,     0,     0,     0, "default"                      , "radial"   , "-------", 'y' , '-'  },   <* 
- *>    {    '-',    'b',   2000,      7,    16,   170,     0,     0,     0,     0,     0,     0,     0, "default"                      , "block"    , "-------", 'y' , '-'  },   <* 
- *>    {    '-',    '-',    360,      7,    16,   170,     0,     0,     0,     0,     0,     0,     0, "default"                      , "radial"   , "-------", 'y' , '-'  },   <* 
- *>    {    '-',    '-',      0,      7,    16,   170,     0,     0,     0,     0,     0,     0,     0, "end-of-entries"               , "end"      , "-------", 'y' , '-'  },   <* 
- *> };                                                                                                                                                                           <*/
 
 
 /*====================------------------------------------====================*/
@@ -265,7 +253,8 @@ PROG_init          (void)
    /*---(begin)--------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---(globals)------------------------*/
-   COLOR_init ();
+   FORMAT_init  ();
+   COLOR_init   ();
    my.print       =  '-';
    my.space       =    0;
    my.explode     =  0.0;
@@ -375,51 +364,16 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   DRAW_globals ();
-   for (i = 0; i < MAX_FORMAT; ++i) {
-      if (g_formats [i].name [0] = '\0')      break;
-      /*> my.cutoff     = g_formats [i].cutoff;                                         <*/
-      my.point      = g_formats [i].point;
-      my.ring       = g_formats [i].ring;
-      my.thick [0]  = g_formats [i].l0;
-      my.thick [1]  = g_formats [i].l1;
-      my.thick [2]  = g_formats [i].l2;
-      my.thick [3]  = g_formats [i].l3;
-      my.thick [4]  = g_formats [i].l4;
-      my.thick [5]  = g_formats [i].l5;
-      my.thick [6]  = g_formats [i].l6;
-      strcpy (my.tdesc, g_formats [i].tdesc);
-      strcpy (my.fdesc, g_formats [i].fdesc);
-      strcpy (my.label, g_formats [i].label);
-      my.ghost      = g_formats [i].ghost;
-      if (my.noempty == '-')  my.noempty    = g_formats [i].noempty;
-   }
-   if (my.thick [0] == 0)  my.thick [0] = my.ring;
-   for (i = 1; i < 7; ++i) {
-      x_cum = my.thick [i - 1] + my.ring;
-      if (my.thick [i] == 0)  my.thick [i] = x_cum;
-   }
-   my.point     =   32;
-   my.thick [0] =  200;
-   my.thick [1] =  600;
-   my.thick [2] = 1200;
-   strcpy (my.tdesc, "3-level explosion");
-   /*> my.thick [0] =  200;                                                           <* 
-    *> my.thick [1] =  400;                                                           <* 
-    *> my.thick [2] =  600;                                                           <* 
-    *> my.thick [3] =  800;                                                           <* 
-    *> my.thick [4] = 1000;                                                           <* 
-    *> my.thick [5] = 1200;                                                           <*/
-   /*> strcpy (my.tdesc, "7-level dirtree");                                          <*/
-   strcpy (my.fdesc, "radial/sunburst");
-   COLOR_filter ();
-   NODE_init    ();
+   FORMAT_set     ("mime");
+   DRAW_globals   ();
+   COLOR_filter   ();
+   NODE_init      ();
    DRAW_window_sizes ();
-   yXINIT_start (my.w_title, my.w_wide, my.w_tall, YX_FOCUSABLE, YX_FIXED, YX_SILENT);
+   yXINIT_start   (my.w_title, my.w_wide, my.w_tall, YX_FOCUSABLE, YX_FIXED, YX_SILENT);
    /*> yGLTEX_free  ();                                                               <*/
-   FONT_load    ();
-   DRAW_init    ();
-   DRAW_resize  (my.w_wide, my.w_tall);
+   FONT_load      ();
+   DRAW_init      ();
+   DRAW_resize    (my.w_wide, my.w_tall);
    /*---(complete)-----------------------*/
    DEBUG_TOPS   yLOG_exit    (__FUNCTION__);
    DEBUG_TOPS   yLOG_break   ();

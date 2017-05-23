@@ -12,8 +12,8 @@ LINK    = gcc
 LIBS    =
 LIBS    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT -lyGLTEX
 LIBD    = -L/usr/local/libs -lyX11 -lX11 -lGL -lGLU -lm -lXext -lyURG -lySTR -lyFONT -lyGLTEX -lyLOG
-OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_keys.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os ${BASE}_color.os ${BASE}_tags.os  ${BASE}_graph.os
-OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_keys.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o  ${BASE}_color.o  ${BASE}_tags.o   ${BASE}_graph.o
+OBJS    = ${BASE}_main.os ${BASE}_prog.os ${BASE}_format.os ${BASE}_keys.os ${BASE}_file.os ${BASE}_node.os ${BASE}_draw.os ${BASE}_color.os ${BASE}_tags.os  ${BASE}_graph.os
+OBJD    = ${BASE}_main.o  ${BASE}_prog.o  ${BASE}_format.o  ${BASE}_keys.o  ${BASE}_file.o  ${BASE}_node.o  ${BASE}_draw.o  ${BASE}_color.o  ${BASE}_tags.o   ${BASE}_graph.o
 
 #*---(make variables)-----------------*#
 COPY    = cp -f  
@@ -46,6 +46,11 @@ ${BASE}_prog.o     : ${BASE}.h     ${BASE}_prog.c
 	${COMP}    ${BASE}_prog.c                          ${INC}
 	${STRIP}   ${BASE}_prog.c     > ${BASE}_prog.cs
 	${COMP}    ${BASE}_prog.cs   -o ${BASE}_prog.os    ${INC}
+
+${BASE}_format.o   : ${BASE}.h     ${BASE}_format.c
+	${COMP}    ${BASE}_format.c                        ${INC}
+	${STRIP}   ${BASE}_format.c   > ${BASE}_format.cs
+	${COMP}    ${BASE}_format.cs -o ${BASE}_format.os  ${INC}
 
 ${BASE}_keys.o     : ${BASE}.h     ${BASE}_keys.c
 	${COMP}    ${BASE}_keys.c                          ${INC}

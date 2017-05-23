@@ -237,10 +237,13 @@ PROG_event         (void)
             case ')': my.inc     = STOP;      my.angle -=  20.0;    break;
             case '}': my.inc     = STOP;      my.angle -=  90.0;    break;
             case ']': my.inc     = STOP;      my.angle  =   0.0;    break;
+
+            case '_': my.t_curr  = 0;                               break;
             case 'K': my.t_curr -= 5;                               break;
             case 'k': --my.t_curr;                                  break;
             case 'j': ++my.t_curr;                                  break;
             case 'J': my.t_curr += 5;                               break;
+            case 'G': my.t_curr  = my.t_shown;                      break;
             /*> case 'i':                         my.zdist -=  20.0;    break;        <* 
              *> case 'I':                         my.zdist -= 100.0;    break;        <* 
              *> case 'o':                         my.zdist +=  20.0;    break;        <* 
@@ -282,7 +285,7 @@ PROG_event         (void)
       if (my.angle <   0.0) my.angle  = my.angle + 360.0 - my.inc;
       /*---(update)----------------------*/
       x_tbot = ((my.t_shown / 5) - 7) * 5;
-      printf ("%4d  %4d  %4d  %4d  %4d\n", my.t_shown, my.t_shown / 5, (my.t_shown / 5) - 7, x_tbot, my.t_curr);
+      /*> printf ("%4d  %4d  %4d  %4d  %4d\n", my.t_shown, my.t_shown / 5, (my.t_shown / 5) - 7, x_tbot, my.t_curr);   <*/
       if (my.t_curr < 0     )  my.t_curr = 0;
       if (my.t_curr > x_tbot)  my.t_curr = x_tbot;
       if (x_tcurr != my.t_curr)  TAGS_draw ();

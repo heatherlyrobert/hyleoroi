@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6a"
-#define     VER_TXT   "got scroll up and down working on tag list"
+#define     VER_NUM   "v0.6b"
+#define     VER_TXT   "format code separated and mostly works on tables"
 
 
 
@@ -321,31 +321,48 @@ extern      int         g_acolor;
 extern      int         txf_sm;
 extern      int         txf_bg;
 
+
+
+#define     MAX_RING    10
 #define     MAX_FORMAT  100
+typedef     struct      cLAYER       tLAYER;
+struct cLAYER {
+   /*---(names)-------------*/
+   char        name        [10];            /* identification for finding     */
+   char        desc        [50];            /* identification for finding     */
+   /*---(characteristics)---*/
+   float       radius;
+   char        tool;
+   char        label;
+   /*---(done)--------------*/
+};
+extern      tLAYER      g_layers       [MAX_FORMAT];
+extern      int         g_nlayer;
+
+
 typedef     struct      cFORMAT      tFORMAT;
 struct cFORMAT {
-   char        name        [20];            /* identification for finding     */
-   char        depth;                       /* max layers shown               */
-   int         full;
-   int         cutoff;
-   int         point;
-   int         ring;
-   int         l0;
-   int         l1;
-   int         l2;
-   int         l3;
-   int         l4;
-   int         l5;
-   int         l6;
-   char        tdesc       [50];
-   char        fdesc       [50];
-   char        label       [10];
-   char        ghost;
-   char        noempty;
+   /*---(names)-------------*/
+   char        name        [15];            /* identification for finding     */
+   char        format      [25];            /* identification for finding     */
+   char        desc        [60];            /* identification for finding     */
+   /*---(layers)------------*/
+   char        layer_names [MAX_RING][15];
+   /*---(working)-----------*/
+   int         levels;
+   int         layers      [MAX_RING];
+   float       cums        [MAX_RING];
+   char        valid;
+   /*---(done)--------------*/
 };
 extern      tFORMAT     g_formats      [MAX_FORMAT];
+extern      int         g_nformat;
+
+
 
 float  ctrl[3][3];
+
+
 
 #define     DEG2RAD  (3.1415927 / 180.0)
 #define     RAD2DEG  (180.0 / 3.1415927)
@@ -353,7 +370,6 @@ extern      float       my_sin [4000];
 extern      float       my_cos [4000];
 
 
-#define     MAX_RING   20
 typedef     struct     cGLOBAL      tGLOBAL;
 struct cGLOBAL {
    /*===[[ ------- ]]=======================*/
@@ -613,6 +629,13 @@ char        COLOR_label        (tNODE *a_node, char a_style);
 int         COLOR_next         (void);
 
 
+
+char        FORMAT_init        (void);
+int         FORMAT_find_format (char *a_name);
+int         FORMAT_find_layer  (char *a_name);
+float       FORMAT_get_radius  (int   a_layer);
+char        FORMAT_dump_formats   (void);
+char        FORMAT_set         (char *a_name);
 
 
 #endif

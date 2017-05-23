@@ -16,10 +16,16 @@
 
 tLAYER      g_layers       [MAX_FORMAT] = {
    /* ---name--------  ---description----------------------------   thick-  ---tool-------  ---tool------- */
+
    { "ctr-norm"      , "center circle, room for label"           ,  0.1667, TOOL_NODE     , LABEL_LABEL    },
-   { "wdg-big"       , "two-thirds size wedge"                   ,  0.6667, TOOL_NODE     , LABEL_LABEL    },
-   { "wdg-three"     , "three ring size wedge"                   ,  0.3333, TOOL_NODE     , LABEL_LABEL    },
+   { "ctr-big"       , "center circle, much smaller"             ,  0.1500, TOOL_NODE     , LABEL_LABEL    },
+
    { "wdg-six"       , "six ring size wedge"                     ,  0.1667, TOOL_NODE     , LABEL_LABEL    },
+   { "wdg-qtr"       , "three ring size wedge"                   ,  0.2500, TOOL_NODE     , LABEL_LABEL    },
+   { "wdg-three"     , "three ring size wedge"                   ,  0.3333, TOOL_NODE     , LABEL_LABEL    },
+   { "wdg-large"     , "three ring size wedge"                   ,  0.6000, TOOL_NODE     , LABEL_LABEL    },
+   { "wdg-big"       , "two-thirds size wedge"                   ,  0.6667, TOOL_NODE     , LABEL_LABEL    },
+
    { ""              , "end-of-list"                             ,  0.0000, 0             , 0              },
 };
 int         g_nlayer       = 0;
@@ -29,6 +35,7 @@ tFORMAT     g_formats [MAX_FORMAT] = {
    /* ---name-------  ---format-------------  ---description----------------------------    -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  lvl  ----------ring indexes----------------  ---------ring cums------------------------------  valid */
    {  "dir"         , "radial/sunburst"     , "six-levels of consitently-sized rings"   , { "ctr-norm"  , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  '-'  },
    {  "mime"        , "radial/sunburst"     , "three-levels, emphasizing outer layer"   , { "ctr-norm"  , "wdg-six"   , "wdg-big"   , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  '-'  },
+   {  "hermes"      , "radial/sunburst"     , "three-levels of consistently-sized rings", { "ctr-big"   , "wdg-qtr"   , "wdg-large" , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  '-'  },
    {  ""            , "end-of-list"         , "end-of-list"                             , { ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  '-'  },
 };
 int         g_nformat      = 0;
@@ -165,6 +172,7 @@ FORMAT_set         (char *a_name)
    }
    strlcpy (my.fdesc, g_formats [x_curr].format, 60);
    strlcpy (my.tdesc, g_formats [x_curr].desc  , 60);
+   my.point = 32;
    return 0;
 }
 

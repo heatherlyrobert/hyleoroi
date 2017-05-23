@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6b"
-#define     VER_TXT   "format code separated and mostly works on tables"
+#define     VER_NUM   "v0.6c"
+#define     VER_TXT   "format updated for the current use cases (hermes,helios)"
 
 
 

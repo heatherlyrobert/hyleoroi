@@ -364,7 +364,7 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   FORMAT_set     ("mime");
+   FORMAT_set     ("hermes");
    DRAW_globals   ();
    COLOR_filter   ();
    NODE_init      ();

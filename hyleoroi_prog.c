@@ -361,7 +361,7 @@ PROG_begin         (void)
    /*---(header)-------------------------*/
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---()-------------------------------*/
-   FORMAT_set     ("mimecat");
+   FORMAT_set     ("dirtree");
    DRAW_globals   ();
    COLOR_filter   ();
    NODE_init      ();

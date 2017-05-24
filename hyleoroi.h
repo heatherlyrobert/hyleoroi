@@ -260,8 +260,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6e"
-#define     VER_TXT   "fix up screen titles, add format name too"
+#define     VER_NUM   "v0.6f"
+#define     VER_TXT   "takes format option from input file now"
 
 
 

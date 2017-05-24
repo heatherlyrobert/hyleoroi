@@ -144,7 +144,7 @@ FILE_verb          (void)
    /*---(local variables)--+-----------+-*/
    char        rce         =  -10;          /* return code for errors         */
    char       *x_formats   = "  FULL  FULL-FORMAT  SIMPLE  SIMPLE-FORMAT  ";
-   char       *x_metas     = "  source  label  display  rings  ";
+   char       *x_metas     = "  source  label  format  ";
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -191,6 +191,10 @@ FILE_verb          (void)
       case 'l' :
          DEBUG_INPT   yLOG_note    ("source program report/label");
          strlcpy (my.report, s_fields [1], LEN_FIELD);
+         break;
+      case 'f' :
+         DEBUG_INPT   yLOG_note    ("display format");
+         FORMAT_set     (s_fields [1]);
          break;
       }
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -(rce));

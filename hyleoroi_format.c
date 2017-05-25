@@ -32,11 +32,11 @@ int         g_nlayer       = 0;
 
 
 tFORMAT     g_formats [MAX_FORMAT] = {
-   /* ---name-------  ---formal----------  ---format-------------  ---description----------------------------    -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  lvl  ----------ring indexes----------------  ---------ring cums------------------------------  ---labels--------------------------------------- valid */
-   {  "dirtree"     , "helios-dir"       , "radial/sunburst"     , "six-levels of consitently-sized rings"   , { "ctr-norm"  , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-'  },
-   {  "mimecat"     , "helios-mime"      , "radial/sunburst"     , "three-levels, emphasizing outer layer"   , { "ctr-norm"  , "wdg-six"   , "wdg-desc"  , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-'  },
-   {  "exelocs"     , "hermes-locs"      , "radial/sunburst"     , "three-levels, emphasis on outer layer"   , { "ctr-big"   , "wdg-qtr"   , "wdg-large" , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-'  },
-   {  ""            , "end-of-list"      , "end-of-list"         , "end-of-list"                             , { ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-'  },
+   /* ---name-------  ---formal----------  ---format-------------  ---description----------------------------    -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  -1234567890-  lvl  ----------ring indexes----------------  ---------ring cums------------------------------  ---labels---------------------------------------  hole  valid */
+   {  "dirtree"     , "helios-dir"       , "radial/sunburst"     , "six-levels of consitently-sized rings"   , { "ctr-norm"  , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , "wdg-six"   , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-',  '-'  },
+   {  "mimecat"     , "helios-mime"      , "radial/sunburst"     , "three-levels, emphasizing outer layer"   , { "ctr-norm"  , "wdg-six"   , "wdg-desc"  , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-',  '-'  },
+   {  "exelocs"     , "hermes-locs"      , "radial/sunburst"     , "three-levels, emphasis on outer layer"   , { "ctr-big"   , "wdg-qtr"   , "wdg-large" , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  'y',  '-'  },
+   {  ""            , "end-of-list"      , "end-of-list"         , "end-of-list"                             , { ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          , ""          }, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, '-', '-', '-', '-', '-', '-', '-', '-', '-', '-',  '-',  '-'  },
 };
 int         g_nformat      = 0;
 
@@ -153,6 +153,7 @@ FORMAT_set         (char *a_name)
    strlcpy (my.fentry, g_formats [x_curr].name  , 60);
    strlcpy (my.fdesc , g_formats [x_curr].format, 60);
    strlcpy (my.tdesc , g_formats [x_curr].desc  , 60);
+   my.hole  = g_formats [x_curr].hole;
    my.point = 32;
    return 0;
 }

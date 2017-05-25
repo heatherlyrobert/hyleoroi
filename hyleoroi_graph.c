@@ -117,7 +117,7 @@ DRAW__radial_empty   (tNODE *a_node, char a_type)
 }
 
 char         /*===[[ draw a single wedge ]]===============[ leaf   [ ------ ]=*/
-DRAW__radial_full    (tNODE *a_node)
+DRAW__radial_full    (tNODE *a_node, char a_hole)
 {
    /*---(local variables)--+-----------+-*/
    char        rce         =  -10;
@@ -133,8 +133,10 @@ DRAW__radial_full    (tNODE *a_node)
       DEBUG_GRAF   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(color)--------------------------*/
+   if (a_hole == 'y')  COLOR_back  ();
+   else                COLOR_node  (a_node);
    /*---(draw)---------------------------*/
-   COLOR_node  (a_node);
    glBegin (GL_POLYGON); {
       /*---(set level)-------------------*/
       glTranslatef ( 0.0,  0.0, - (a_node->level * 20));
@@ -259,14 +261,19 @@ DRAW_node          (
    }
    /*---(draw)---------------------------*/
    glPushMatrix(); {
-      if (x_ghost != 'y')  DRAW__radial_full   (a_node);
-      else                 DRAW__radial_empty  (a_node, 'g');
-      if (my.space != 0 && x_ghost != 'y') {
-         if (a_node->nchild > 0)  DRAW__radial_empty (a_node, 's');
+      if        (x_ghost == 'y')  {
+         DRAW__radial_empty  (a_node, 'g');
+      } else if (my.space > 0 && a_node->nchild > 0)  {
+         DRAW__radial_empty (a_node, 's');
+      } else if (a_level == 0 && my.hole == 'y')  {
+         DRAW__radial_full   (a_node, 'y');
+      } else {
+         DRAW__radial_full   (a_node, '-');
+         DRAW__radial_text   (a_node, a_style);
       }
-      if (a_style != 'w' && a_style != 'o') {
-         DRAW__radial_text (a_node, a_style);
-      }
+      /*> if (a_style != 'w' && a_style != 'o') {                                     <* 
+       *>    DRAW__radial_text (a_node, a_style);                                     <* 
+       *> }                                                                           <*/
    } glPopMatrix();
    /*---(complete)----------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
@@ -360,8 +367,8 @@ TEX_show           (void)
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree structure visualization");
       glTranslatef(  42.0,  -14.0,    0);
-      if (debug.tops == 'y')  sprintf (t, "[%s] debug", VER_NUM);
-      else                    sprintf (t, "[%s] normal", VER_NUM);
+      if (yURG_debugmode () == 'y')  sprintf (t, "[%s] debug", VER_NUM);
+      else                           sprintf (t, "[%s] normal", VER_NUM);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef( -42.0,    0.0,    0);
       glRotatef(-90.0, 0.0, 0.0, 1.0);

@@ -253,6 +253,7 @@
 
 /*===[[ CUSTOM LIBRARIES ]]===================================================*/
 #include    <yLOG.h>         /* CUSTOM : heatherly program logging            */
+#include    <yURG.h>         /* CUSTOM : heatherly urgent processing          */
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
 #include    <yX11.h>         /* CUSTOM : heatherly xlib/glx setup             */
 #include    <yFONT.h>        /* CUSTOM : heatherly opengl texture-map fonts   */
@@ -260,8 +261,8 @@
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6f"
-#define     VER_TXT   "takes format option from input file now"
+#define     VER_NUM   "v0.6g"
+#define     VER_TXT   "port to yURG and massively overhaul Makefile ;)"
 
 
 
@@ -356,6 +357,7 @@ struct cFORMAT {
    int         layers      [MAX_RING];
    float       cums        [MAX_RING];
    char        labels      [MAX_RING];
+   char        hole;                        /* centter is a hole only (y/n)   */
    char        valid;
    /*---(done)--------------*/
 };
@@ -424,6 +426,7 @@ struct cGLOBAL {
    /*---(reporting)----------------------*/
    char        node_dump;              /* dump full node table                */
    /*---(colors)-------------------------*/
+   char        hole;
    int         color;                  /* next color to use in node           */
    uint        color_start;            /* initial color seed                  */
    uint        color_seed;             /* seed for random                     */
@@ -465,69 +468,69 @@ extern      tGLOBAL    my;
 
 
 
-/*===[[ DEBUGGING SETUP ]]====================================================*/
-/* this is my latest standard format, vars, and urgents                       */
-/* v3.0b : added signal handling                                (2014-feb-01) */
-struct cDEBUG
-{
-   /*---(handle)-------------------------*/
-   int         logger;                 /* log file so that we don't close it  */
-   /*---(overall)------------------------*/  /* abcdefghi_klm_opq_stu__x__    */
-   /* f = full urgents turns on all standard urgents                          */
-   /* k = kitchen sink and turns everything, i mean everything on             */
-   /* q = quiet turns all urgents off including the log itself                */
-   char        tops;                   /* t) broad structure and context      */
-   char        summ;                   /* s) statistics and analytical output */
-   /*---(startup/shutdown)---------------*/
-   char        args;                   /* a) command line args and urgents    */
-   char        conf;                   /* c) configuration handling           */
-   char        prog;                   /* p) program setup and teardown       */
-   /*---(file processing)----------------*/
-   char        inpt;                   /* i) text/data file input             */
-   char        inptM;                  /* -) text/data file input   (mas/more)*/
-   char        outp;                   /* o) text/data file output            */
-   char        outpM;                  /* -) text/data file output  (mas/more)*/
-   /*---(event handling)-----------------*/
-   char        loop;                   /* l) main program event loop          */
-   char        user;                   /* u) user input and handling          */
-   char        apis;                   /* z) interprocess communication       */
-   char        sign;                   /* x) os signal handling               */
-   char        scrp;                   /* b) scripts and batch operations     */
-   char        hist;                   /* h) history, undo, redo              */
-   /*---(program)------------------------*/
-   char        graf;                   /* g) grahpics, drawing, and display   */
-   char        data;                   /* d) primary data structure handling  */
-   char        envi;                   /* e) environment processing           */
-   char        enviM;                  /* -) environment processing (mas/more)*/
-   char        mems;                   /* m) memory usage                     */
-   /*---(specific)-----------------------*/
-   char        color;                  /* -) color choices                    */
-   /*---(done)---------------------------*/
-};
-typedef     struct      cDEBUG       tDEBUG;
-extern      tDEBUG      debug;
+/*> /+===[[ DEBUGGING SETUP ]]====================================================+/   <* 
+ *> /+ this is my latest standard format, vars, and urgents                       +/   <* 
+ *> /+ v3.0b : added signal handling                                (2014-feb-01) +/   <* 
+ *> struct cDEBUG                                                                      <* 
+ *> {                                                                                  <* 
+ *>    /+---(handle)-------------------------+/                                        <* 
+ *>    int         logger;                 /+ log file so that we don't close it  +/   <* 
+ *>    /+---(overall)------------------------+/  /+ abcdefghi_klm_opq_stu__x__    +/   <* 
+ *>    /+ f = full urgents turns on all standard urgents                          +/   <* 
+ *>    /+ k = kitchen sink and turns everything, i mean everything on             +/   <* 
+ *>    /+ q = quiet turns all urgents off including the log itself                +/   <* 
+ *>    char        tops;                   /+ t) broad structure and context      +/   <* 
+ *>    char        summ;                   /+ s) statistics and analytical output +/   <* 
+ *>    /+---(startup/shutdown)---------------+/                                        <* 
+ *>    char        args;                   /+ a) command line args and urgents    +/   <* 
+ *>    char        conf;                   /+ c) configuration handling           +/   <* 
+ *>    char        prog;                   /+ p) program setup and teardown       +/   <* 
+ *>    /+---(file processing)----------------+/                                        <* 
+ *>    char        inpt;                   /+ i) text/data file input             +/   <* 
+ *>    char        inptM;                  /+ -) text/data file input   (mas/more)+/   <* 
+ *>    char        outp;                   /+ o) text/data file output            +/   <* 
+ *>    char        outpM;                  /+ -) text/data file output  (mas/more)+/   <* 
+ *>    /+---(event handling)-----------------+/                                        <* 
+ *>    char        loop;                   /+ l) main program event loop          +/   <* 
+ *>    char        user;                   /+ u) user input and handling          +/   <* 
+ *>    char        apis;                   /+ z) interprocess communication       +/   <* 
+ *>    char        sign;                   /+ x) os signal handling               +/   <* 
+ *>    char        scrp;                   /+ b) scripts and batch operations     +/   <* 
+ *>    char        hist;                   /+ h) history, undo, redo              +/   <* 
+ *>    /+---(program)------------------------+/                                        <* 
+ *>    char        graf;                   /+ g) grahpics, drawing, and display   +/   <* 
+ *>    char        data;                   /+ d) primary data structure handling  +/   <* 
+ *>    char        envi;                   /+ e) environment processing           +/   <* 
+ *>    char        enviM;                  /+ -) environment processing (mas/more)+/   <* 
+ *>    char        mems;                   /+ m) memory usage                     +/   <* 
+ *>    /+---(specific)-----------------------+/                                        <* 
+ *>    char        color;                  /+ -) color choices                    +/   <* 
+ *>    /+---(done)---------------------------+/                                        <* 
+ *> };                                                                                 <* 
+ *> typedef     struct      cDEBUG       tDEBUG;                                       <* 
+ *> extern      tDEBUG      debug;                                                     <*/
 
-#define     DEBUG_TOPS          if (debug.tops      == 'y')
-#define     DEBUG_SUMM          if (debug.summ      == 'y')
-#define     DEBUG_ARGS          if (debug.args      == 'y')
-#define     DEBUG_CONF          if (debug.conf      == 'y')
-#define     DEBUG_PROG          if (debug.prog      == 'y')
-#define     DEBUG_INPT          if (debug.inpt      == 'y')
-#define     DEBUG_INPTM         if (debug.inptM     == 'y')
-#define     DEBUG_OUTP          if (debug.outp      == 'y')
-#define     DEBUG_OUTPM         if (debug.outpM     == 'y')
-#define     DEBUG_LOOP          if (debug.loop      == 'y')
-#define     DEBUG_USER          if (debug.user      == 'y')
-#define     DEBUG_APIS          if (debug.apis      == 'y')
-#define     DEBUG_SIGN          if (debug.sign      == 'y')
-#define     DEBUG_SCRP          if (debug.scrp      == 'y')
-#define     DEBUG_HIST          if (debug.hist      == 'y')
-#define     DEBUG_GRAF          if (debug.graf      == 'y')
-#define     DEBUG_DATA          if (debug.data      == 'y')
-#define     DEBUG_ENVI          if (debug.envi      == 'y')
-#define     DEBUG_ENVIM         if (debug.enviM     == 'y')
-#define     DEBUG_MEMS          if (debug.mems      == 'y')
-#define     DEBUG_COLOR         if (debug.color     == 'y')
+/*> #define     DEBUG_TOPS          if (debug.tops      == 'y')                       <* 
+ *> #define     DEBUG_SUMM          if (debug.summ      == 'y')                       <* 
+ *> #define     DEBUG_ARGS          if (debug.args      == 'y')                       <* 
+ *> #define     DEBUG_CONF          if (debug.conf      == 'y')                       <* 
+ *> #define     DEBUG_PROG          if (debug.prog      == 'y')                       <* 
+ *> #define     DEBUG_INPT          if (debug.inpt      == 'y')                       <* 
+ *> #define     DEBUG_INPTM         if (debug.inptM     == 'y')                       <* 
+ *> #define     DEBUG_OUTP          if (debug.outp      == 'y')                       <* 
+ *> #define     DEBUG_OUTPM         if (debug.outpM     == 'y')                       <* 
+ *> #define     DEBUG_LOOP          if (debug.loop      == 'y')                       <* 
+ *> #define     DEBUG_USER          if (debug.user      == 'y')                       <* 
+ *> #define     DEBUG_APIS          if (debug.apis      == 'y')                       <* 
+ *> #define     DEBUG_SIGN          if (debug.sign      == 'y')                       <* 
+ *> #define     DEBUG_SCRP          if (debug.scrp      == 'y')                       <* 
+ *> #define     DEBUG_HIST          if (debug.hist      == 'y')                       <* 
+ *> #define     DEBUG_GRAF          if (debug.graf      == 'y')                       <* 
+ *> #define     DEBUG_DATA          if (debug.data      == 'y')                       <* 
+ *> #define     DEBUG_ENVI          if (debug.envi      == 'y')                       <* 
+ *> #define     DEBUG_ENVIM         if (debug.enviM     == 'y')                       <* 
+ *> #define     DEBUG_MEMS          if (debug.mems      == 'y')                       <* 
+ *> #define     DEBUG_COLOR         if (debug.color     == 'y')                       <*/
 
 
 
@@ -570,7 +573,7 @@ char        DRAW_main          (void);
 
 char        PROG_event         (void);
 char        DRAW__radial_empty (tNODE *a_node, char a_type);
-char        DRAW__radial_full  (tNODE *a_curr);
+char        DRAW__radial_full  (tNODE *a_curr, char a_hole);
 char        DRAW_node          (int a_level, tNODE *a_curr, char a_style);
 char        DRAW_level         (int a_level, tNODE *a_first, char a_recurse);
 char        DRAW_resize        (uint a_w, uint a_h);

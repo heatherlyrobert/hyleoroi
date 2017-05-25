@@ -228,7 +228,7 @@ COLOR_fore         (void)
       glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
       break;
    }
-   if (debug.tops == 'y')  glColor4f (1.0f, 0.0f, 0.0f, 1.0f);
+   if (yURG_debugmode () == 'y')  glColor4f (1.0f, 0.0f, 0.0f, 1.0f);
    return 0;
 }
 

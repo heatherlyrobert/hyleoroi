@@ -90,7 +90,7 @@ DRAW__radial_empty   (tNODE *a_node, char a_type)
    /*---(set defaults)-------------------*/
    if (a_type == 's') {
       glLineWidth (my.space);
-      COLOR_back ();
+      yCOLOR_diff_back ();
    } else {
       glLineWidth (1);
       glColor4f ( 0.25,  0.25, 0.25, 1.00);
@@ -134,8 +134,8 @@ DRAW__radial_full    (tNODE *a_node, char a_hole)
       return rce;
    }
    /*---(color)--------------------------*/
-   if (a_hole == 'y')  COLOR_back  ();
-   else                COLOR_node  (a_node);
+   if (a_hole == 'y')  yCOLOR_diff_back  ();
+   else                yCOLOR_diff_color (a_node->color, 1.0);
    /*---(draw)---------------------------*/
    glBegin (GL_POLYGON); {
       /*---(set level)-------------------*/
@@ -194,7 +194,7 @@ DRAW__radial_text    (tNODE *a_node, char a_style)
    }
    /*---(draw text)----------------------*/
    glPushMatrix(); {
-      COLOR_label   (a_node, a_style);
+      yCOLOR_diff_label   (a_node->color, 1.0);
       glRotatef   (s_mid, 0.0, 0.0, 1.0);
       glTranslatef(s_cen, 0.0, 0.0);
       if (a_node->level == 0)   x_align = YF_MIDCEN;
@@ -361,7 +361,7 @@ TEX_show           (void)
     *> glLoadIdentity  ();                                                            <*/
    /*---(title)-----------------------------*/
    glPushMatrix(); {
-      COLOR_fore ();
+      yCOLOR_diff_fore ();
       glTranslatef(-345.0,  348.0,  200.0);
       yFONT_print (txf_bg, 14, YF_TOPLEF, "hyleoroi (forest watchers)");
       glTranslatef(   0.0,  -18.0,    0);
@@ -380,12 +380,12 @@ TEX_show           (void)
       yFONT_print (txf_bg, 10, YF_TOPLEF, my.fentry);
    } glPopMatrix();
    glPushMatrix(); {
-      COLOR_fore ();
+      yCOLOR_diff_fore ();
       glTranslatef(-345.0, -335.0,  200.0);
-      sprintf (t, "%d color max-diff palette", g_acolor);
+      sprintf (t, "%d color max-diff palette", yCOLOR_diff_total());
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef(   0.0,   15.0,    0.0);
-      sprintf (t, "using %d colors"          , g_ncolor);
+      sprintf (t, "using %d colors"          , yCOLOR_diff_count());
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef(   0.0,   15.0,    0.0);
       sprintf (t, "start color %d", my.color_start);
@@ -395,7 +395,7 @@ TEX_show           (void)
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
    } glPopMatrix();
    glPushMatrix(); {
-      COLOR_fore ();
+      yCOLOR_diff_fore ();
       glTranslatef( 345.0, -335.0,  200.0);
       if (my.noempty == 'y')  yFONT_print (txf_bg, 10, YF_TOPRIG, "no empty");
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "show empty");
@@ -404,7 +404,7 @@ TEX_show           (void)
       else                    yFONT_print (txf_bg, 10, YF_TOPRIG, "no ghosts");
    } glPopMatrix();
    glPushMatrix(); {
-      COLOR_fore ();
+      yCOLOR_diff_fore ();
       glTranslatef( 345.0,  348.0,  200.0);
       yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
       glTranslatef(   0.0,  -12.0,    0.0);

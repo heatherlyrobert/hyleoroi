@@ -255,14 +255,15 @@
 #include    <yLOG.h>         /* CUSTOM : heatherly program logging            */
 #include    <yURG.h>         /* CUSTOM : heatherly urgent processing          */
 #include    <ySTR.h>         /* CUSTOM : heatherly string handling            */
+#include    <yCOLOR.h>       /* CUSTOM : heatherly color handling             */
 #include    <yX11.h>         /* CUSTOM : heatherly xlib/glx setup             */
 #include    <yFONT.h>        /* CUSTOM : heatherly opengl texture-map fonts   */
 #include    <yGLTEX.h>       /* CUSTOM : heatherly opengl texture handling    */
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6g"
-#define     VER_TXT   "port to yURG and massively overhaul Makefile ;)"
+#define     VER_NUM   "v0.6r"
+#define     VER_TXT   "moved all color handling to yCOLOR"
 
 
 
@@ -308,17 +309,6 @@ extern      tNODE      *g_bnode;
 
 
 
-#define     MAX_COLOR   400
-typedef     struct      cCOLOR      tCOLOR;
-struct      cCOLOR {
-   float       red;
-   float       grn;
-   float       blu;
-   float       bri;
-};
-extern      tCOLOR      g_colors [MAX_COLOR];
-extern      int         g_ncolor;
-extern      int         g_acolor;
 
 extern      int         txf_sm;
 extern      int         txf_bg;
@@ -622,20 +612,11 @@ char        NODE_size_purge    (void);
 #define     COLOR_LIGHT        'l'
 #define     COLOR_WHITE        'w'
 /*---(program)----------------*/
-char        COLOR_init         (void);
 char        COLOR_wrap         (void);
 int         COLOR_count        (void);
 /*---(filtering)--------------*/
-char        COLOR_filter       (void);
-int         COLOR_selected     (void);
 /*---(setting)--------------*/
-char        COLOR_set_scheme   (char a_scheme);
-char        COLOR_fore         (void);
-char        COLOR_back         (void);
-char        COLOR_node         (tNODE *a_node);
-char        COLOR_label        (tNODE *a_node, char a_style);
 /*---(cursor)---------------*/
-int         COLOR_next         (void);
 
 
 

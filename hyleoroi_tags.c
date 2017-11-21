@@ -81,7 +81,7 @@ DRAW__show         (int a_seq, tNODE *a_node)
    x_rig  = s_wide;
    x_text = x_top + (x_tall / 2.0);
    /*---(draw node)----------------------*/
-   COLOR_node (a_node);
+   yCOLOR_diff_color (a_node->color, 1.0);
    glPushMatrix    (); {
       glBegin         (GL_POLYGON); {
          glVertex3f  (x_lef, -x_top    ,  0.0f);
@@ -97,12 +97,12 @@ DRAW__show         (int a_seq, tNODE *a_node)
    else if (a_node->pct <  0.001)  sprintf (x_size, "%-s", "");
    else                            sprintf (x_size, "%03d", (int) (a_node->pct * 1000));
    glPushMatrix    (); {
-      COLOR_fore  ();
+      yCOLOR_diff_fore  ();
       glTranslatef(x_margin , -x_text,  20.0);
       yFONT_print (txf_bg, 16, YF_MIDLEF, a_node->hint);
       glTranslatef(x_hints  , 0.0    ,   0.0);
       yFONT_print (txf_bg, 16, YF_MIDLEF, x_size);
-      COLOR_label (a_node, '-');
+      yCOLOR_diff_label (a_node, 1.0);
       glTranslatef(x_hints + x_margin * 2.0, 0.0,   0.0);
       yFONT_print (txf_bg, 16, YF_MIDLEF, x_name);
    } glPopMatrix   ();
@@ -154,7 +154,7 @@ TAGS_draw          (void)
    /*---(setup)--------------------------*/
    rc = yGLTEX_draw_start   (s_fbo, YGLTEX_TOPLEF, s_wide, s_tall);
    /*---(background)---------------------*/
-   COLOR_back ();
+   yCOLOR_diff_back ();
    glPushMatrix    (); {
       glBegin         (GL_POLYGON); {
          glVertex3f  (0.0f     , 0.0       ,  -20.0f);

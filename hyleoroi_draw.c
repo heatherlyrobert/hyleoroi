@@ -93,7 +93,7 @@ DRAW_init          (void)
    yLOG_senter  (__FUNCTION__);
    /*---(color)--------------------------*/
    yLOG_snote   ("color");
-   COLOR_back  ();
+   yCOLOR_diff_back  ();
    glClearDepth  (1.0f);
    /*---(textures)-----------------------*/
    yLOG_snote   ("texture");

@@ -242,12 +242,7 @@ FILE_node          (int a_level, char *a_name, long a_value, int a_count, char *
    strlcpy (x_curr->desc , a_desc, 200);
    /*---(assign color)----------------*/
    x_curr->level    = a_level;
-   if (my.chaos == 'y')   x_curr->color = rand_r (&(my.color_seed)) % g_ncolor;
-   else {
-      if (my.color >= g_ncolor)  my.color -= g_ncolor;
-      x_curr->color    = my.color;
-      ++my.color;
-   }
+   x_curr->color = yCOLOR_diff_next ();
    /*> printf ("%2d.%-40.40s  %3d\n", x_curr->level, x_curr->label, x_curr->color);   <*/
    /*---(assign hint)-----------------*/
    if (++(my.hint_minor) > 'z') {
@@ -470,12 +465,7 @@ FILE_read          (
       if (a_level == 1 && strcmp (x_curr->label, "empty"    ) == 0)  my.empty = x_curr;
       /*---(assign system gen)-----------*/
       x_curr->level    = a_level;
-      if (my.chaos == 'y')   x_curr->color = rand() % g_ncolor;
-      else {
-         if (my.color >= g_ncolor)  my.color -= g_ncolor;
-         x_curr->color    = my.color;
-         ++my.color;
-      }
+      x_curr->color = yCOLOR_diff_next ();
       if (++(my.hint_minor) > 'z') {
          my.hint_minor = 'a';
          ++(my.hint_major);

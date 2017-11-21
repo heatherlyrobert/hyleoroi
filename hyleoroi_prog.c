@@ -254,7 +254,6 @@ PROG_init          (void)
    DEBUG_TOPS   yLOG_enter   (__FUNCTION__);
    /*---(globals)------------------------*/
    FORMAT_init  ();
-   COLOR_init   ();
    my.print       =  '-';
    my.space       =    0;
    my.explode     =  0.0;
@@ -332,17 +331,15 @@ PROG_args          (int argc, char *argv[])
          my.node_dump    = 'y';
       }
       /*---(color options)---------------*/
-      else if (strcmp (a, "--color-white"       ) == 0)  COLOR_set_scheme (COLOR_WHITE);
-      else if (strcmp (a, "--color-light"       ) == 0)  COLOR_set_scheme (COLOR_LIGHT);
-      else if (strcmp (a, "--color-dark"        ) == 0)  COLOR_set_scheme (COLOR_DARK );
-      else if (strcmp (a, "--color-black"       ) == 0)  COLOR_set_scheme (COLOR_BLACK);
+      else if (strcmp (a, "--color-white"       ) == 0)  yCOLOR_diff_scheme (YCOLOR_WHITE);
+      else if (strcmp (a, "--color-light"       ) == 0)  yCOLOR_diff_scheme (YCOLOR_LIGHT);
+      else if (strcmp (a, "--color-dark"        ) == 0)  yCOLOR_diff_scheme (YCOLOR_DARK );
+      else if (strcmp (a, "--color-black"       ) == 0)  yCOLOR_diff_scheme (YCOLOR_BLACK);
       else if (strcmp (a, "--color-start"       ) == 0) {
-         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 )  my.color_start = my.color   = atoi (argv[++i]);
+         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 ) yCOLOR_diff_start (atoi (argv[++i]));
       }
-      else if (strcmp (a, "--color-chaos"       ) == 0)  my.chaos          = 'y';
-      else if (strcmp (a, "--color-ordered"     ) == 0)  my.chaos          = '-';
-      else if (strcmp (a, "--color-cutoff"      ) == 0) {
-         if (i + 1 < argc) if (atof (argv [i + 1]) > 0 )  my.cutoff  = atof (argv[++i]);
+      else if (strcmp (a, "--color-chaos"       ) == 0) {
+         if (i + 1 < argc) if (atoi (argv [i + 1]) > 0 ) yCOLOR_diff_chaos (atoi (argv[++i]));
       }
    }
    /*---(display urgents)----------------*/
@@ -363,7 +360,6 @@ PROG_begin         (void)
    /*---()-------------------------------*/
    FORMAT_set     ("dirtree");
    DRAW_globals   ();
-   COLOR_filter   ();
    NODE_init      ();
    DRAW_window_sizes ();
    yXINIT_start   (my.w_title, my.w_wide, my.w_tall, YX_FOCUSABLE, YX_FIXED, YX_SILENT);

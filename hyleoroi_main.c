@@ -51,8 +51,8 @@ main               (int argc, char *argv[])
       PROG_end     ();
       exit (-1);
    }
-   /*---(node setup)---------------------*/
-   /*> rc = NODE_read    (0, g_hnode);                                                 <*/
+   rc = PROG_visual_beg ();
+   if (rc < 0) return rc;
    rc = FILE_main    ();
    if (rc < 0) return rc;
 
@@ -85,7 +85,8 @@ main               (int argc, char *argv[])
    }
    DEBUG_TOPS   yLOG_exit    (__FUNCTION__);
    /*---(complete)-----------------------*/
-   PROG_end     ();
+   PROG_visual_end ();
+   PROG_end        ();
    return 0;
 }
 

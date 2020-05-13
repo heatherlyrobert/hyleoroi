@@ -206,10 +206,10 @@ PROG_event         (void)
    /*---(processing loop)----------------*/
    while (x_quit == '-') {
       x_tcurr = my.t_curr;
-      while (XPending(DISP)) {
-         XNextEvent(DISP, &EVNT);
+      while (XPending(YX_DISP)) {
+         XNextEvent(YX_DISP, &YX_EVNT);
          /*---(start)----------------------------*/
-         switch(EVNT.type) {
+         switch(YX_EVNT.type) {
          case Expose:
             DEBUG_LOOP   yLOG_note    ("expose event");
             break;
@@ -220,8 +220,8 @@ PROG_event         (void)
 
          case KeyPress:
             DEBUG_LOOP   yLOG_note    ("keypress event");
-            x_keyevent = (XKeyEvent *) &EVNT;
-            rci = XLookupString ((XKeyEvent *) &EVNT, x_keys, 5, NULL, NULL);
+            x_keyevent = (XKeyEvent *) &YX_EVNT;
+            rci = XLookupString ((XKeyEvent *) &YX_EVNT, x_keys, 5, NULL, NULL);
             if (rci < 1) break;
             switch (x_keys [0]) {
             case 'Q': x_quit = 'y';                                 break;
@@ -316,48 +316,48 @@ DRAW_ring_set      (void)
 /*> char                                                                                                <* 
  *> mask_big   (void)                                                                                   <* 
  *> {                                                                                                   <* 
- *>    Pixmap    bounds    = XCreatePixmap(DISP, BASE, my.w_wide, my.w_tall, 1);                                <* 
- *>    GC        gc        = XCreateGC(DISP, bounds, 0, NULL);                                          <* 
- *>    XSetForeground(DISP, gc, 0);                                                                     <* 
- *>    XFillRectangle(DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
- *>    XSetForeground(DISP, gc, 1);                                                                     <* 
- *>    /+> XFillArc(DISP, bounds, gc, my.w_wide / 2, my.w_tall / 2, my.w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
- *>    /+> XFillArc(DISP, bounds, gc, 0, 0,1000,1000, 0, 360 * 64);                       <*            <* 
- *>     *> XShapeCombineMask(DISP, BASE, ShapeBounding, 0, 0, bounds, ShapeSet);          <+/           <* 
+ *>    Pixmap    bounds    = XCreatePixmap(YX_DISP, YX_BASE, my.w_wide, my.w_tall, 1);                                <* 
+ *>    GC        gc        = XCreateGC(YX_DISP, bounds, 0, NULL);                                          <* 
+ *>    XSetForeground(YX_DISP, gc, 0);                                                                     <* 
+ *>    XFillRectangle(YX_DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
+ *>    XSetForeground(YX_DISP, gc, 1);                                                                     <* 
+ *>    /+> XFillArc(YX_DISP, bounds, gc, my.w_wide / 2, my.w_tall / 2, my.w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
+ *>    /+> XFillArc(YX_DISP, bounds, gc, 0, 0,1000,1000, 0, 360 * 64);                       <*            <* 
+ *>     *> XShapeCombineMask(YX_DISP, YX_BASE, ShapeBounding, 0, 0, bounds, ShapeSet);          <+/           <* 
  *>    /+---(complete)-----------------------+/                                                         <* 
- *>    XFreePixmap(DISP, bounds);                                                                       <* 
+ *>    XFreePixmap(YX_DISP, bounds);                                                                       <* 
  *>    return 0;                                                                                        <* 
  *> }                                                                                                   <*/
 
 /*> char                                                                                                <* 
  *> mask_med   (void)                                                                                   <* 
  *> {                                                                                                   <* 
- *>    Pixmap    bounds    = XCreatePixmap(DISP, BASE, my.w_wide, my.w_tall, 1);                                <* 
- *>    GC        gc        = XCreateGC(DISP, bounds, 0, NULL);                                          <* 
- *>    XSetForeground(DISP, gc, 0);                                                                     <* 
- *>    XFillRectangle(DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
- *>    XSetForeground(DISP, gc, 1);                                                                     <* 
- *>    /+> XFillArc(DISP, bounds, gc, w_wide / 2, my.w_tall / 2, w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
- *>    XFillArc(DISP, bounds, gc, 0, 0,   600,   600, 0, 360 * 64);                                     <* 
- *>    XShapeCombineMask(DISP, BASE, ShapeBounding, 0, 0, bounds, ShapeSet);                            <* 
+ *>    Pixmap    bounds    = XCreatePixmap(YX_DISP, YX_BASE, my.w_wide, my.w_tall, 1);                                <* 
+ *>    GC        gc        = XCreateGC(YX_DISP, bounds, 0, NULL);                                          <* 
+ *>    XSetForeground(YX_DISP, gc, 0);                                                                     <* 
+ *>    XFillRectangle(YX_DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
+ *>    XSetForeground(YX_DISP, gc, 1);                                                                     <* 
+ *>    /+> XFillArc(YX_DISP, bounds, gc, w_wide / 2, my.w_tall / 2, w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
+ *>    XFillArc(YX_DISP, bounds, gc, 0, 0,   600,   600, 0, 360 * 64);                                     <* 
+ *>    XShapeCombineMask(YX_DISP, YX_BASE, ShapeBounding, 0, 0, bounds, ShapeSet);                            <* 
  *>    /+---(complete)-----------------------+/                                                         <* 
- *>    XFreePixmap(DISP, bounds);                                                                       <* 
+ *>    XFreePixmap(YX_DISP, bounds);                                                                       <* 
  *>    return 0;                                                                                        <* 
  *> }                                                                                                   <*/
 
 /*> char                                                                                                <* 
  *> mask_small (void)                                                                                   <* 
  *> {                                                                                                   <* 
- *>    Pixmap    bounds    = XCreatePixmap(DISP, BASE, my.w_wide, my.w_tall, 1);                                <* 
- *>    GC        gc        = XCreateGC(DISP, bounds, 0, NULL);                                          <* 
- *>    XSetForeground(DISP, gc, 0);                                                                     <* 
- *>    XFillRectangle(DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
- *>    XSetForeground(DISP, gc, 1);                                                                     <* 
- *>    /+> XFillArc(DISP, bounds, gc, w_wide / 2, my.w_tall / 2, w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
- *>    XFillArc(DISP, bounds, gc, 100, 100, 400, 400, 0, 360 * 64);                                     <* 
- *>    XShapeCombineMask(DISP, BASE, ShapeBounding, 0, 0, bounds, ShapeSet);                            <* 
+ *>    Pixmap    bounds    = XCreatePixmap(YX_DISP, YX_BASE, my.w_wide, my.w_tall, 1);                                <* 
+ *>    GC        gc        = XCreateGC(YX_DISP, bounds, 0, NULL);                                          <* 
+ *>    XSetForeground(YX_DISP, gc, 0);                                                                     <* 
+ *>    XFillRectangle(YX_DISP, bounds, gc, 0, 0, my.w_wide, my.w_tall);                                            <* 
+ *>    XSetForeground(YX_DISP, gc, 1);                                                                     <* 
+ *>    /+> XFillArc(YX_DISP, bounds, gc, w_wide / 2, my.w_tall / 2, w_wide / 2, my.w_tall / 2, 0, 360 * 64);   <+/   <* 
+ *>    XFillArc(YX_DISP, bounds, gc, 100, 100, 400, 400, 0, 360 * 64);                                     <* 
+ *>    XShapeCombineMask(YX_DISP, YX_BASE, ShapeBounding, 0, 0, bounds, ShapeSet);                            <* 
  *>    /+---(complete)-----------------------+/                                                         <* 
- *>    XFreePixmap(DISP, bounds);                                                                       <* 
+ *>    XFreePixmap(YX_DISP, bounds);                                                                       <* 
  *>    return 0;                                                                                        <* 
  *> }                                                                                                   <*/
 
@@ -424,7 +424,7 @@ DRAW_main          (void)
    DRAW_command    ();
    DRAW_alts       ();
    /*---(send for processing)------------*/
-   glXSwapBuffers  (DISP, BASE);
+   glXSwapBuffers  (YX_DISP, YX_BASE);
    glFlush         ();
    /*---(complete)-----------------------*/
    return 0;

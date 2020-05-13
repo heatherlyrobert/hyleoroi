@@ -183,7 +183,7 @@ NODE_level         (int a_level, tNODE *a_parent)
    DEBUG_INPT   yLOG_point   ("a_parent"  , a_parent);
    /*---(defense)------------------------*/
    --rce;  if (a_parent == NULL) {
-      DEBUG_INPT   yLOG_warn    ("a_parent"       ,  "can not be NULL");
+      DEBUG_INPT   yLOG_info    ("a_parent"       ,  "can not be NULL");
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return rce;
    }
@@ -237,7 +237,7 @@ NODE_dump          (
    DEBUG_INPT   yLOG_point   ("a_parent"  , a_parent);
    /*---(defense)------------------------*/
    --rce;  if (a_parent == NULL) {
-      DEBUG_INPT   yLOG_warn    ("a_parent"       ,  "can not be NULL");
+      DEBUG_INPT   yLOG_info    ("a_parent"       ,  "can not be NULL");
       DEBUG_INPT   yLOG_exit    (__FUNCTION__);
       return rce;
    }

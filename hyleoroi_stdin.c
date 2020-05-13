@@ -11,6 +11,7 @@
 char        s_format    =  '-';
 
 char        s_recd      [LEN_RECD];         /* input record                   */
+int         s_level     =    0;
 char        s_verb      [LEN_FIELD];
 int         s_all       =    0;             /* input line count (all lines)   */
 int         s_lines     =    0;             /* input line count (data lines)  */
@@ -21,11 +22,10 @@ int         s_nfield    =    0;
 char        s_proc      =  'y';             /* input processed flag           */
 
 tNODE      *s_nodes     [MAX_DEPTH];
-int         s_level     =    0;
 
 
 char         /*===[[ read a node ]]=======================[ ------ [ ------ ]=*/
-FILE_check         (void)
+STDIN_check             (void)
 {
    /*---(locals)-----------+-----------+-*/
    char        rce         =  -10;          /* return code for errors         */
@@ -36,40 +36,157 @@ FILE_check         (void)
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(set stdin to non-blocking)------*/
    DEBUG_INPT   yLOG_note    ("make stdin non-blocking");
-   x_flags = fcntl(0, F_GETFL, 0);
-   rc = fcntl (stdin, F_SETFL, x_flags | O_NONBLOCK);
+   x_flags = fcntl (STDIN_FILENO, F_GETFL, 0);
+   rc = fcntl (STDIN_FILENO,  F_SETFL, x_flags | O_NONBLOCK);
    DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   /*> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_note    ("can not set to non-blocking");                  <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_value   ("errno"     , errno);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   } else {
+      DEBUG_INPT   yLOG_note    ("success, non-blocking");
+   }
    /*---(test stdin for input)-----------*/
    DEBUG_INPT   yLOG_note    ("test for input on stdin");
    x_ch = getc (stdin);
+   ungetc (x_ch, stdin);
+   /*---(put stdin back to normal)-------*/
+   DEBUG_INPT   yLOG_note    ("put stdin back to blocking");
+   rc = fcntl  (STDIN_FILENO, F_SETFL, x_flags);
+   DEBUG_INPT   yLOG_value   ("rc"        , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_INPT   yLOG_value   ("errno"     , errno);
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   } else {
+      DEBUG_INPT   yLOG_note    ("success, back to blocking");
+   }
+   /*---(test stdin for input)-----------*/
    DEBUG_INPT   yLOG_value   ("x_ch"      , x_ch);
    --rce;  if (x_ch == -1) {
       DEBUG_INPT   yLOG_note    ("no input available");
       DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
+   } else {
+      DEBUG_INPT   yLOG_note    ("success, input found");
    }
-   /*---(put stdin back to normal)-------*/
-   DEBUG_INPT   yLOG_note    ("put stdin back to normal");
-   ungetc (x_ch, stdin);
-   rc = fcntl  (0, F_SETFL, x_flags);
-   DEBUG_INPT   yLOG_value   ("rc"        , rc);
-   /*> --rce;  if (rc < 0) {                                                          <* 
-    *>    DEBUG_INPT   yLOG_note    ("can not set to back to normal");                <* 
-    *>    DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);                              <* 
-    *>    return rce;                                                                 <* 
-    *> }                                                                              <*/
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+STDIN__getline          (void)
+{
+   /*---(local variables)--+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        x_recd      [LEN_RECD]  = "";
+   char       *p           = NULL;
+   int         x_len       =    0;
+   int         c           =    0;
+   int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(prepare)------------------------*/
+   strlcpy (s_recd, ""    , LEN_RECD);
+   /*---(read)---------------------------*/
+   while (1) {
+      /*---(read a line)--------------------*/
+      ++s_all;
+      DEBUG_INPT   yLOG_value   ("s_all"     , s_all);
+      p = fgets (x_recd, LEN_RECD, stdin);
+      DEBUG_INPT   yLOG_value   ("fgets"     , rc);
+      DEBUG_INPT   yLOG_point   ("p"         , p);
+      --rce;  if (feof (stdin)) {
+         DEBUG_INPT   yLOG_note    ("end of file input");
+         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      --rce;  if (p == NULL) {
+         DEBUG_INPT   yLOG_note    ("end of file input");
+         DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+         return rce;
+      }
+      /*---(reformat)-----------------------*/
+      x_len = strlen (x_recd);
+      x_recd [--x_len] = '\0';
+      DEBUG_INPT   yLOG_value   ("x_len"     , x_len);
+      --rce;  if (x_len <= 0) {
+         DEBUG_INPT   yLOG_note    ("empty line, skipping");
+         continue;
+      }
+      /*---(filter)-------------------------*/
+      strldecode (x_recd, LEN_RECD);
+      DEBUG_INPT   yLOG_info    ("x_recd"    , x_recd);
+      --rce;  if (x_recd [0] == '#' ) {
+         DEBUG_INPT   yLOG_note    ("comment line, skipping");
+         continue;
+      }
+      /*---(delimiters)---------------------*/
+      c = strldcnt (x_recd, '', LEN_RECD);
+      if (c == 0)  c = strldcnt (x_recd, '§', LEN_RECD);
+      if (c == 0)  c = strldcnt (x_recd, '|', LEN_RECD);
+      DEBUG_INPT   yLOG_value   ("count"     , c);
+      --rce;  if (c < 1) {
+         DEBUG_INPT   yLOG_note    ("not enough delimiters");
+         continue;
+      }
+      /*---(get level)----------------------*/
+      c = 0;
+      for (i = 0; i < x_len; ++i) {
+         if (x_recd [i] != ' ')  break;
+         ++c;
+      }
+      DEBUG_INPT   yLOG_value   ("indent"    , c);
+      s_level = c / 3;
+      /*---(update)-------------------------*/
+      ++s_lines;
+      DEBUG_INPT   yLOG_value   ("s_lines"   , s_lines);
+      break;
+      /*---(done)---------------------------*/
+   }
+   /*---(save back)----------------------*/
+   strlcpy (s_recd, x_recd, LEN_RECD);
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+STDIN__parse            (void)
+{
+   /*---(local variables)--+-----+-----+-*/
+   char        rce         =  -10;
+   int         i           =    0;
+   int         x_len       =    0;
+   char       *p           = NULL;
+   char       *q           = "|§";
+   char       *r           = NULL;
+   char        x_recd      [LEN_RECD];
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(parse)--------------------------*/
+   strlcpy (x_recd, s_recd, LEN_RECD);
+   s_nfield = 0;
+   p = strtok_r  (x_recd, q, &r);
+   while (p != NULL) {
+      if (s_nfield >= MAX_FIELD)   break;
+      if (p == NULL)               break;
+      DEBUG_INPT   yLOG_complex ("content"   , "%2d, %s", s_nfield, p);
+      strltrim (p, ySTR_BOTH, LEN_FIELD);
+      strlcpy (s_fields [s_nfield], p, LEN_FIELD);
+      ++s_nfield;
+      p = strtok_r  (NULL  , q, &r);
+   }
+   DEBUG_INPT   yLOG_value   ("s_nfield"  , s_nfield);
    /*---(complete)-----------------------*/
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char         /*===[[ read a node ]]=======================[ ------ [ ------ ]=*/
-FILE_line          (void)
+FILE__line              (void)
 {
    /*---(local variables)--+-----------+-*/
    char        rce         =  -10;          /* return code for errors         */
@@ -110,27 +227,17 @@ FILE_line          (void)
    }
    ++s_lines;
    DEBUG_INPT   yLOG_value   ("s_lines"   , s_lines);
-   /*---(parse first)--------------------*/
+   /*---(parse)--------------------------*/
    strlcpy (x_recd, s_recd, LEN_RECD);
+   s_nfield = 0;
    p = strtok_r  (x_recd, q, &r);
-   --rce;  if (p == NULL) {
-      DEBUG_INPT   yLOG_note    ("no data on line");
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, -(rce));
-      return -(rce);
-   }
-   s_nfield = 1;
-   strlcpy (s_fields, p, LEN_FIELD);
-   /*---(parse rest)---------------------*/
-   for (i = 1; i < MAX_FIELD; ++i) {
-      p = strtok_r  (NULL  , q, &r);
-      if (p == NULL) {
-         DEBUG_INPT   yLOG_note    ("fields done");
-         break;
-      }
-      DEBUG_INPT   yLOG_value   ("field"     , i);
-      DEBUG_INPT   yLOG_info    ("content"   , p);
-      strlcpy (s_fields [i], p, LEN_FIELD);
+   while (p != NULL) {
+      if (s_nfield >= MAX_FIELD)   break;
+      if (p == NULL)               break;
+      DEBUG_INPT   yLOG_complex ("content"   , "%2d, %s", s_nfield, p);
+      strlcpy (s_fields [s_nfield], p, LEN_FIELD);
       ++s_nfield;
+      p = strtok_r  (NULL  , q, &r);
    }
    DEBUG_INPT   yLOG_value   ("s_nfield"  , s_nfield);
    /*---(complete)-----------------------*/
@@ -279,13 +386,6 @@ FILE_main          (void)
    char        x_desc      [LEN_FIELD];
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
-   /*---(check for input)----------------*/
-   rc = FILE_check ();
-   --rce;  if (rc < 0) {
-      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
-      printf ("warning.  nothing to do.  can not find any input on stdin.  done.\n");
-      return rce;
-   }
    /*---(prepare)------------------------*/
    s_nodes [0] = g_hnode;
    for (i = 1; i < MAX_DEPTH; ++i) {
@@ -296,7 +396,7 @@ FILE_main          (void)
    DEBUG_INPT   yLOG_note    ("start reading file");
    while (1) {
       /*---(take in a line)--------------*/
-      rc = FILE_line ();
+      rc = FILE__line ();
       if (rc > 0) continue;  /* filtered line     */
       if (rc < 0) break;     /* end-of-input      */
       /*---(check mode)------------------*/
@@ -427,7 +527,7 @@ FILE_read          (
       if (x_indent > a_level) {
          DEBUG_INPT   yLOG_note    ("indent level increased, new level");
          if (x_curr == NULL) {
-            DEBUG_INPT   yLOG_warn    ("x_curr is NULL" ,  "double jump detected, abort");
+            DEBUG_INPT   yLOG_info    ("x_curr is NULL" ,  "double jump detected, abort");
             DEBUG_INPT   yLOG_exit    (__FUNCTION__);
             return -2;
          }
@@ -441,7 +541,7 @@ FILE_read          (
       /*---(create node)-----------------*/
       x_curr = NODE_append (a_owner);
       if (x_curr == NULL) {
-         DEBUG_INPT   yLOG_warn    ("x_curr is NULL" ,  "could not create a new node");
+         DEBUG_INPT   yLOG_info    ("x_curr is NULL" ,  "could not create a new node");
          DEBUG_INPT   yLOG_exit    (__FUNCTION__);
          return rce + 1;
       }
@@ -483,3 +583,33 @@ FILE_read          (
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                      unit testing                            ----===*/
+/*====================------------------------------------====================*/
+static void  o___UNIT_TEST_______o () { return; }
+
+char*        /*-> unit test accessor -----------------[ light  [us.B60.2A3.F2]*/ /*-[01.0000.00#.#]-*/ /*-[--.---.---.--]-*/
+STDIN__unit             (char *a_question, int n)
+{
+   /*---(locals)-------------------------*/
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_CONF   yLOG_enter   (__FUNCTION__);
+   /*---(parse location)-----------------*/
+   strcpy  (unit_answer, "STDIN            : question not understood");
+   /*---(overall)------------------------*/
+   if      (strcmp (a_question, "s_recd"        ) == 0) {
+      strlencode (s_recd, ySTR_NORM, LEN_RECD);
+      snprintf (unit_answer, LEN_FULL, "STDIN s_recd     : %2d %2d[%.79s]", s_level, strlen (s_recd), s_recd);
+   }
+   else if (strcmp (a_question, "field"         ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN field (%2d) : %2d[%.50s]", n, strlen (s_fields [n]), s_fields [n]);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_CONF   yLOG_exit    (__FUNCTION__);
+   return unit_answer;
+}
+

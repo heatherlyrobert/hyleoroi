@@ -1,10 +1,39 @@
 /*===============================[[ beg-code ]]===============================*/
 
+/*===[[ ONE_LINERS ]]=========================================================*/
+
+#define     P_FOCUS     "VS (visualization)"
+#define     P_NICHE     "ds (data structures)"
+#define     P_PURPOSE   "provide visualization and navigation of tree structures"
+
+#define     P_NAMESAKE  "hyleoroi"
+#define     P_HERITAGE  "warrior nymphs, watchers of the woods and trees"
+#define     P_IMAGERY   ""
+
+#define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
+#define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_CODESIZE  "small       (appoximately 1,000 slocl)"
+
+#define     P_AUTHOR    "heatherlyrobert"
+#define     P_CREATED   "2014-01"
+#define     P_DEPENDS   "none"
+
+#define     P_VERMAJOR  "0.--, pre-production"
+#define     P_VERMINOR  "0.7-, building up to production use"
+#define     P_VERNUM    "0.7a"
+#define     P_VERTXT    "created early unit testing for stdin/file functions"
+
+#define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
+#define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
+#define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
+
+
+
 /*===[[ HEADER ]]=============================================================*/
 /*
  *   focus         : visualization
  *   niche         : data structures
- *   application   : hyleoroi          (nymphs, watchers of the woods and trees)
+ *   heritage      : hyleoroi (warrior nymphs, watchers of the woods and trees)
  *   purpose       : provide visualization and navigation of tree structures
  *
  *   base_system   : gnu/linux   (powerful, ubiquitous, technical, and hackable)
@@ -259,11 +288,11 @@
 #include    <yX11.h>         /* CUSTOM : heatherly xlib/glx setup             */
 #include    <yFONT.h>        /* CUSTOM : heatherly opengl texture-map fonts   */
 #include    <yGLTEX.h>       /* CUSTOM : heatherly opengl texture handling    */
+#include    <errno.h>
+#include    <error.h>
 
 
 /* rapidly evolving version number to aid with visual change confirmation     */
-#define     VER_NUM   "v0.6r"
-#define     VER_TXT   "moved all color handling to yCOLOR"
 
 
 
@@ -541,16 +570,21 @@ char       *ySTR_trim          (char *a_source, char a_mode);
 #define       ySTR_EVERY     'e'
 #define       ySTR_MAX       'm'
 /*---(program)--------------*/
-char        PROG_init          (void);
-char        PROG_urgsmass      (char a_set, char a_extra);
-char        PROG_urgs          (int argc, char *argv[]);
-char        PROG_args          (int argc, char *argv[]);
-char        PROG_begin         (void);
-char        PROG_end           (void);
+char        PROG_init               (void);
+char        PROG_urgsmass           (char a_set, char a_extra);
+char        PROG_urgs               (int argc, char *argv[]);
+char        PROG_args               (int argc, char *argv[]);
+char        PROG_begin              (void);
+char        PROG_visual_beg         (void);
+char        PROG_visual_end         (void);
+char        PROG_end                (void);
 /*---(testing)--------------*/
-char        PROG_testquiet     (void);
-char        PROG_testloud      (void);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        PROG__unit_quiet        (void);
+char        PROG__unit_loud         (void);
+char        PROG__unit_end          (void);
 
+extern      char          unit_answer [LEN_FULL];
 
 
 char        DRAW_window_sizes  (void);
@@ -588,9 +622,13 @@ char        TAGS_show          (void);
 char        FONT_load          (void);
 char        FONT_unload        (void);
 
-char        FILE_check         (void);
-char        FILE_main          (void);
+/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        STDIN_check             (void);
+char        STDIN__getline          (void);
+char        STDIN__parse            (void);
+char*       STDIN__unit             (char *a_question, int n);
 
+char        FILE_main               (void);
 char        NODE_init          (void);
 tNODE*      NODE_append        (tNODE *a_owner);
 char        NODE_wipe          (tNODE *a_node);

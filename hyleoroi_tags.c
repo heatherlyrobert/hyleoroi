@@ -120,7 +120,7 @@ DRAW__list         (tNODE *a_base, int a_start)
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (a_base == NULL) {
-      DEBUG_GRAF   yLOG_warn    ("a_base NULL"   ,  "can not process");
+      DEBUG_GRAF   yLOG_info    ("a_base NULL"   ,  "can not process");
       DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
       return rce;
    }
@@ -152,7 +152,7 @@ TAGS_draw          (void)
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    /*---(setup)--------------------------*/
-   rc = yGLTEX_draw_start   (s_fbo, YGLTEX_TOPLEF, s_wide, s_tall);
+   rc = yGLTEX_draw_start   (s_fbo, YGLTEX_TOPLEF, s_wide, s_tall, 1.0);
    /*---(background)---------------------*/
    yCOLOR_diff_back ();
    glPushMatrix    (); {

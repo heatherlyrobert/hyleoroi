@@ -296,7 +296,7 @@ DRAW_level         (
    DEBUG_GRAF   yLOG_value   ("a_level"   , a_level);
    /*---(defense)------------------------*/
    --rce;  if (a_first == NULL) {
-      DEBUG_GRAF   yLOG_warn    ("a_first NULL"   ,  "can not process");
+      DEBUG_GRAF   yLOG_info    ("a_first NULL"   ,  "can not process");
       DEBUG_GRAF   yLOG_exit    (__FUNCTION__);
       return rce;
    }
@@ -326,7 +326,7 @@ GRAPH_draw         (void)
    /*---(header)-------------------------*/
    DEBUG_GRAF   yLOG_enter   (__FUNCTION__);
    /*---(setup)--------------------------*/
-   rc = yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h);
+   rc = yGLTEX_draw_start   (s_fbo, YGLTEX_MIDCEN, my.tex_w, my.tex_h, 1.0);
    /*---(draw)---------------------------*/
    /*> g_bnode = NODE_find_name ("music_clean");                                      <*/
    g_bnode = NULL;
@@ -442,7 +442,7 @@ TEX_show           (void)
    } glPopMatrix();
    glBindTexture   (GL_TEXTURE_2D, 0);
    /*---(force the redraw)-----------------*/
-   /*> glXSwapBuffers(DISP, BASE);                                                    <* 
+   /*> glXSwapBuffers(YX_DISP, YX_BASE);                                                    <* 
     *> glFlush();                                                                     <*/
    /*---(complete)-----------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);

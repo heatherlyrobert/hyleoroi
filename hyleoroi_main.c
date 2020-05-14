@@ -53,6 +53,7 @@ main               (int argc, char *argv[])
    }
    rc = PROG_visual_beg ();
    if (rc < 0) return rc;
+   NODE_root      ();
    rc = FILE_main    ();
    if (rc < 0) return rc;
 
@@ -66,8 +67,8 @@ main               (int argc, char *argv[])
       g_hnode->size   -= my.empty->size;
       my.empty->size  = 0;
    }
-   NODE_levelall ();
-   NODE_process  (0, g_hnode);
+   PREP_levelall ();
+   PREP_process  (0, g_hnode);
    NODE_DUMP   NODE_dump  (0, g_hnode, 'y');
 
    /*---(drawing setup)------------------*/

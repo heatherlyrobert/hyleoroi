@@ -65,7 +65,7 @@ PROG_version       (void)
 #else
    strncpy (t, "[unknown  ]", 15);
 #endif
-   snprintf (verstring, 100, "%s   %s : %s", t, VER_NUM, VER_TXT);
+   snprintf (verstring, 100, "%s   %s : %s", t, P_VERNUM, P_VERTXT);
    return verstring;
 }
 
@@ -88,6 +88,7 @@ PROG_init          (void)
       return rce;
    }
    /*---(globals)------------------------*/
+   STDIN_init   ();
    FORMAT_init  ();
    my.print       =  '-';
    my.space       =    0;

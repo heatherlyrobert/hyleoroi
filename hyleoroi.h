@@ -20,8 +20,8 @@
 
 #define     P_VERMAJOR  "0.--, pre-production"
 #define     P_VERMINOR  "0.7-, building up to production use"
-#define     P_VERNUM    "0.7a"
-#define     P_VERTXT    "created early unit testing for stdin/file functions"
+#define     P_VERNUM    "0.7b"
+#define     P_VERTXT    "restructured and unit tested node file/interface"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -308,27 +308,29 @@ typedef struct cNODE tNODE;
 struct cNODE {
    /*---(basic)--------------------------*/
    int         level;                  /* level in hierarchy (was "l")        */
-   char        name        [ 50];      /* full name                           */
-   char        label       [ 12];      /* short label                         */
+   char        label       [LEN_LABEL];/* short label                         */
+   char        name        [LEN_DESC]; /* full name                           */
    double      size;                   /* relative size                       */
    double      count;                  /* relative count                      */
-   char        desc        [200];      /* description                         */
-   char        hint        [  5];      /* two-letter hint for rapid access    */
+   char        desc        [LEN_DESC]; /* description                         */
+   char        hint        [LEN_TERSE];/* two-letter hint for rapid access    */
    /*---(positioning)--------------------*/
    float       beg;                    /* start degree on radial tree         */
    float       pct;                    /* percent of parent size              */
    float       width;                  /* central angle or width              */
    float       end;                    /* end degree on radial tree           */
    int         color;                  /* color index                         */
-   /*---(connections)--------------------*/
-   tNODE      *owner;                  /* pointer to owning node              */
-   tNODE      *sib_head;               /* pointer to head of siblings         */
-   tNODE      *sib_tail;               /* pointer to tail of siblings         */
+   /*---(master list)--------------------*/
+   tNODE      *m_prev;                 /* pointer to prev in overall list     */
+   tNODE      *m_next;                 /* pointer to next in overall list     */
+   /*---(parent)-------------------------*/
+   tNODE      *parent;                 /* pointer to owning node              */
+   tNODE      *s_prev;                 /* poinder to prev sibling             */
+   tNODE      *s_next;                 /* poinder to next sibling             */
+   /*---(children)-----------------------*/
+   tNODE      *c_head;                 /* pointer to head of siblings         */
+   tNODE      *c_tail;                 /* pointer to tail of siblings         */
    int         nchild;                 /* number of child nodes               */
-   tNODE      *sib_prev;               /* poinder to prev sibling             */
-   tNODE      *sib_next;               /* poinder to next sibling             */
-   tNODE      *prev;                   /* pointer to prev in overall list     */
-   tNODE      *next;                   /* pointer to next in overall list     */
    /*---(done)---------------------------*/
 };
 extern      tNODE      *g_hnode;
@@ -398,9 +400,14 @@ extern      float       my_cos [4000];
 typedef     struct     cGLOBAL      tGLOBAL;
 struct cGLOBAL {
    /*===[[ ------- ]]=======================*/
+   /*---(incomming context)--------------*/
+   char        r_source    [LEN_HUND];      /* source program for data        */
+   char        r_report    [LEN_HUND];      /* source report long name        */
+   char        r_oneline   [LEN_HUND];      /* source report descrition       */
+   char        r_option    [LEN_HUND];      /* source program option used     */
+   char        r_timestamp [LEN_HUND];      /* source date of generation      */
+   char        r_format    [LEN_HUND];      /* hyleoroi format requested      */
    /*---(window)-------------------------*/
-   char        source      [100];      /* source program for data             */
-   char        report      [100];      /* source context for data             */
    int         tex_h;                  /* texture height                      */
    int         tex_w;                  /* texture width                       */
    char        type;                   /* mime, dirtree, etc                  */
@@ -623,25 +630,47 @@ char        FONT_load          (void);
 char        FONT_unload        (void);
 
 /*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-123456*/
+char        STDIN_init              (void);
 char        STDIN_check             (void);
 char        STDIN__getline          (void);
 char        STDIN__parse            (void);
+char        STDIN__verbs            (void);
 char*       STDIN__unit             (char *a_question, int n);
 
 char        FILE_main               (void);
-char        NODE_init          (void);
-tNODE*      NODE_append        (tNODE *a_owner);
-char        NODE_wipe          (tNODE *a_node);
+
+
+/*---(program)--------------*/
+char        NODE_init               (void);
+char        NODE__purge             (void);
+/*---(support)--------------*/
+char        NODE__wipe              (tNODE *a_curr);
+/*---(hooking)--------------*/
+char        NODE__master_hook       (tNODE *a_new);
+char        NODE__master_unhook     (tNODE *a_old);
+char        NODE__parent_hook       (tNODE *a_new, tNODE *a_parent);
+char        NODE__parent_unhook     (tNODE *a_old);
+/*---(malloc)---------------*/
+char        NODE__new               (tNODE **a_new);
+char        NODE__free              (tNODE **a_old);
+/*---(exist)----------------*/
+char        NODE_create             (tNODE **a_new, tNODE *a_parent);
+char        NODE_root               (void);
+char        NODE_destroy            (tNODE **a_old);
+
 char        NODE_read          (int a_level, tNODE *a_owner);
-char        NODE_process       (int a_level, tNODE *a_first);
 char        NODE_dump          (int a_level, tNODE *a_parent, char a_recurse );
 char        NODE_reroot        (void);
-char        NODE_level         (int a_level, tNODE *a_parent);
-char        NODE_levelall      (void);
 tNODE*      NODE_find_name     (char *a_label);
-char        NODE_resize        (int a_level, tNODE *a_parent);
-char        NODE_size_purge    (void);
+/*---(unit_test)------------*/
+char*       NODE__unit              (char *a_question, tNODE *a_focus, int n);
 
+
+char        PREP_purge              (void);
+char        PREP_resize             (int a_level, tNODE *a_parent);
+char        PREP_process            (int a_level, tNODE *a_first);
+char        PREP_level              (int a_level, tNODE *a_parent);
+char        PREP_levelall           (void);
 
 /*===[[ HYLEOROI_COLOR.C ]]===================================================*/
 /*---(constants)--------------*/

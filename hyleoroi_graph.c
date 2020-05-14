@@ -305,11 +305,11 @@ DRAW_level         (
    while (x_curr != NULL) {
       DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
       if (a_recurse == 'y' && x_curr->nchild != 0) {
-         DRAW_level (a_level + 1, x_curr->sib_head, a_recurse);
+         DRAW_level (a_level + 1, x_curr->c_head, a_recurse);
       }
       DRAW_node    (a_level, x_curr, '-');
       x_last = x_curr;
-      x_curr = x_curr->sib_next;
+      x_curr = x_curr->s_next;
    }
    /*---(check for empty space)----------*/
    /*---(complete)-------------------------*/
@@ -331,9 +331,9 @@ GRAPH_draw         (void)
    /*> g_bnode = NODE_find_name ("music_clean");                                      <*/
    g_bnode = NULL;
    if (g_bnode != NULL) {
-      NODE_level      (0, g_bnode);
-      NODE_size_purge ();
-      NODE_resize     (0, g_bnode);
+      PREP_level      (0, g_bnode);
+      PREP_purge      ();
+      PREP_resize     (0, g_bnode);
       DRAW_level      (0, g_bnode, 'y');
    }
    else  g_bnode = g_hnode;
@@ -367,8 +367,8 @@ TEX_show           (void)
       glTranslatef(   0.0,  -18.0,    0);
       yFONT_print (txf_bg, 10, YF_TOPLEF, "tree structure visualization");
       glTranslatef(  42.0,  -14.0,    0);
-      if (yURG_debugmode () == 'y')  sprintf (t, "[%s] debug", VER_NUM);
-      else                           sprintf (t, "[%s] normal", VER_NUM);
+      if (yURG_debugmode () == 'y')  sprintf (t, "[%s] debug" , P_VERNUM);
+      else                           sprintf (t, "[%s] normal", P_VERNUM);
       yFONT_print (txf_bg, 10, YF_TOPLEF, t);
       glTranslatef( -42.0,    0.0,    0);
       glRotatef(-90.0, 0.0, 0.0, 1.0);
@@ -406,9 +406,9 @@ TEX_show           (void)
    glPushMatrix(); {
       yCOLOR_diff_fore ();
       glTranslatef( 345.0,  348.0,  200.0);
-      yFONT_print (txf_bg, 10, YF_TOPRIG, my.report);
+      yFONT_print (txf_bg, 10, YF_TOPRIG, my.r_report);
       glTranslatef(   0.0,  -12.0,    0.0);
-      yFONT_print (txf_bg, 14, YF_TOPRIG, my.source);
+      yFONT_print (txf_bg, 14, YF_TOPRIG, my.r_source);
       glTranslatef(   0.0,  -18.0,    0.0);
       sprintf (t, "total nodes %d", g_nnode);
       yFONT_print (txf_bg, 10, YF_TOPRIG, t);

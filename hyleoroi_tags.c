@@ -125,7 +125,7 @@ DRAW__list         (tNODE *a_base, int a_start)
       return rce;
    }
    /*---(process siblings)---------------*/
-   x_curr = a_base->sib_head;
+   x_curr = a_base->c_head;
    while (x_curr != NULL) {
       DEBUG_GRAF   yLOG_info    ("current"   , x_curr->name);
       if (x_curr->pct >= 0.001) {
@@ -136,7 +136,7 @@ DRAW__list         (tNODE *a_base, int a_start)
          ++my.t_shown;
       }
       ++my.t_count;
-      x_curr = x_curr->sib_next;
+      x_curr = x_curr->s_next;
    }
    /*---(complete)-------------------------*/
    DEBUG_GRAF   yLOG_exit    (__FUNCTION__);

@@ -5,24 +5,46 @@
 
 #define     LEN_RECD    2000
 #define     MAX_FIELD   20
-#define     LEN_FIELD   200
 
 
 char        s_format    =  '-';
 
 char        s_recd      [LEN_RECD];         /* input record                   */
 int         s_level     =    0;
-char        s_verb      [LEN_FIELD];
+char        s_verb      [LEN_HUND];  
 int         s_all       =    0;             /* input line count (all lines)   */
 int         s_lines     =    0;             /* input line count (data lines)  */
 
-char        s_fields    [MAX_FIELD][LEN_FIELD];
+char        s_fields    [MAX_FIELD][LEN_HUND];
 int         s_nfield    =    0;
 
 char        s_proc      =  'y';             /* input processed flag           */
 
 tNODE      *s_nodes     [MAX_DEPTH];
 
+
+/*====================------------------------------------====================*/
+/*===----                        program level                         ----===*/
+/*====================------------------------------------====================*/
+static void  o___PROGRAM_________o () { return; }
+
+char
+STDIN_init              (void)
+{
+   strlcpy (my.r_source     , "", LEN_HUND);
+   strlcpy (my.r_report     , "", LEN_HUND);
+   strlcpy (my.r_oneline    , "", LEN_HUND);
+   strlcpy (my.r_option     , "", LEN_HUND);
+   strlcpy (my.r_timestamp  , "", LEN_HUND);
+   strlcpy (my.r_format     , "", LEN_HUND);
+   return 0;
+}
+
+
+/*====================------------------------------------====================*/
+/*===----                        support functions                     ----===*/
+/*====================------------------------------------====================*/
+static void  o___SUPPORT_________o () { return; }
 
 char         /*===[[ read a node ]]=======================[ ------ [ ------ ]=*/
 STDIN_check             (void)
@@ -74,6 +96,24 @@ STDIN_check             (void)
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+char
+STDIN__field_clear       (void)
+{
+   int         i           =    0;
+   for (i = 0; i < MAX_FIELD; ++i) {
+      strlcpy (s_fields [i], "", LEN_HUND);;
+   }
+   s_nfield = 0;
+   return 0;
+}
+
+
+
+/*====================------------------------------------====================*/
+/*===----                         getting lines                        ----===*/
+/*====================------------------------------------====================*/
+static void  o___GETTING_________o () { return; }
 
 char
 STDIN__getline          (void)
@@ -166,6 +206,8 @@ STDIN__parse            (void)
    char        x_recd      [LEN_RECD];
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(clear)--------------------------*/
+   STDIN__field_clear ();
    /*---(parse)--------------------------*/
    strlcpy (x_recd, s_recd, LEN_RECD);
    s_nfield = 0;
@@ -174,8 +216,8 @@ STDIN__parse            (void)
       if (s_nfield >= MAX_FIELD)   break;
       if (p == NULL)               break;
       DEBUG_INPT   yLOG_complex ("content"   , "%2d, %s", s_nfield, p);
-      strltrim (p, ySTR_BOTH, LEN_FIELD);
-      strlcpy (s_fields [s_nfield], p, LEN_FIELD);
+      strltrim (p, ySTR_BOTH, LEN_HUND);
+      strlcpy (s_fields [s_nfield], p, LEN_HUND);
       ++s_nfield;
       p = strtok_r  (NULL  , q, &r);
    }
@@ -184,6 +226,119 @@ STDIN__parse            (void)
    DEBUG_INPT   yLOG_exit    (__FUNCTION__);
    return 0;
 }
+
+
+
+/*====================------------------------------------====================*/
+/*===----                     specific handlers                        ----===*/
+/*====================------------------------------------====================*/
+static void  o___HANDLERS________o () { return; }
+
+char
+STDIN__verbs            (void)
+{
+   /*---(local variables)--+-----------+-*/
+   char        rce         =  -10;          /* return code for errors         */
+   /*---(quick-out)----------------------*/
+   if (s_fields [0][0] != '>')  return 0;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(formatting)---------------------*/
+   if (strcmp (s_fields [0], ">format"     ) == 0) {
+      DEBUG_INPT   yLOG_note    ("display format");
+      strlcpy (my.r_format   , s_fields [1], LEN_HUND);
+      FORMAT_set     (s_fields [1]);
+   }
+   /*---(text labels)--------------------*/
+   else if (strcmp (s_fields [0], ">source"     ) == 0) {
+      DEBUG_INPT   yLOG_note    ("source program name");
+      strlcpy (my.r_source  , s_fields [1], LEN_HUND);
+   }
+   else if (strcmp (s_fields [0], ">report"     ) == 0) {
+      DEBUG_INPT   yLOG_note    ("source program report name");
+      strlcpy (my.r_report  , s_fields [1], LEN_HUND);
+   }
+   else if (strcmp (s_fields [0], ">option"     ) == 0) {
+      DEBUG_INPT   yLOG_note    ("source program option used");
+      strlcpy (my.r_option  , s_fields [1], LEN_HUND);
+   }
+   else if (strcmp (s_fields [0], ">one-line"   ) == 0) {
+      DEBUG_INPT   yLOG_note    ("source program report description");
+      strlcpy (my.r_oneline , s_fields [1], LEN_HUND);
+   }
+   else if (strcmp (s_fields [0], ">timestamp"  ) == 0) {
+      DEBUG_INPT   yLOG_note    ("date data generated");
+      strlcpy (my.r_timestamp, s_fields [1], LEN_HUND);
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+STDIN__node        (int a_level, char *a_name, long a_value, int a_count, char *a_desc)
+{
+   /*---(locals)-----------+-----------+-*/
+   char        rce         =  -10;
+   tNODE      *x_curr      = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_INPT   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_INPT   yLOG_value   ("a_level"   , a_level);
+   --rce;  if (a_level < 1) {
+      DEBUG_INPT   yLOG_note    ("can not add another root");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT   yLOG_value   ("s_level"   , s_level);
+   --rce;  if (a_level > s_level + 1) {
+      DEBUG_INPT   yLOG_note    ("can not double jump");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_INPT   yLOG_point   ("a_name"    , a_name);
+   --rce;  if (a_name == NULL) {
+      DEBUG_INPT   yLOG_note    ("name must have a value");
+      DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(append)-------------------------*/
+   NODE_create (&x_curr, s_nodes [a_level - 1]);
+   /*---(add values)---------------------*/
+   strlcpy (x_curr->label, a_name,  12);
+   strlcpy (x_curr->name , a_name,  50);
+   x_curr->size  = a_value;
+   x_curr->count = a_count;
+   strlcpy (x_curr->desc , a_desc, 200);
+   /*---(assign color)----------------*/
+   x_curr->level    = a_level;
+   x_curr->color = yCOLOR_diff_next ();
+   /*> printf ("%2d.%-40.40s  %3d\n", x_curr->level, x_curr->label, x_curr->color);   <*/
+   /*---(assign hint)-----------------*/
+   if (++(my.hint_minor) > 'z') {
+      my.hint_minor = 'a';
+      ++(my.hint_major);
+   }
+   if (my.hint_major > 'z') {
+      my.hint_minor = '{';
+      my.hint_major = '}';
+   }
+   x_curr->hint [0] = my.hint_major;
+   x_curr->hint [1] = my.hint_minor;
+   x_curr->hint [2] = '\0';
+   /*---(put into order)--------------*/
+   s_nodes [a_level] = x_curr;
+   s_level           = a_level;
+   /*---(complete)-----------------------*/
+   DEBUG_INPT   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+
+
+
+
+
 
 char         /*===[[ read a node ]]=======================[ ------ [ ------ ]=*/
 FILE__line              (void)
@@ -199,7 +354,7 @@ FILE__line              (void)
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
-   for (i = 0; i < MAX_FIELD; ++i)  strlcpy (s_fields [i], "", LEN_FIELD);
+   for (i = 0; i < MAX_FIELD; ++i)  strlcpy (s_fields [i], "", LEN_HUND);
    /*---(read a line)--------------------*/
    ++s_all;
    DEBUG_INPT   yLOG_value   ("s_all"     , s_all);
@@ -235,7 +390,7 @@ FILE__line              (void)
       if (s_nfield >= MAX_FIELD)   break;
       if (p == NULL)               break;
       DEBUG_INPT   yLOG_complex ("content"   , "%2d, %s", s_nfield, p);
-      strlcpy (s_fields [s_nfield], p, LEN_FIELD);
+      strlcpy (s_fields [s_nfield], p, LEN_HUND);
       ++s_nfield;
       p = strtok_r  (NULL  , q, &r);
    }
@@ -262,8 +417,8 @@ FILE_verb          (void)
       return 0;
    }
    /*---(isolate verb)-------------------*/
-   strlcpy  (s_verb, s_fields [0], LEN_FIELD);
-   strltrim (s_verb, ySTR_BOTH, LEN_FIELD);
+   strlcpy  (s_verb, s_fields [0], LEN_HUND);
+   strltrim (s_verb, ySTR_BOTH, LEN_HUND);
    DEBUG_INPT   yLOG_info    ("s_verb"    , s_verb);
    /*---(format styles)------------------*/
    --rce;  if (strstr (x_formats, s_verb) != NULL) {
@@ -288,16 +443,16 @@ FILE_verb          (void)
          DEBUG_INPT   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      strltrim (s_fields [1], ySTR_BOTH, LEN_FIELD);
+      strltrim (s_fields [1], ySTR_BOTH, LEN_HUND);
       DEBUG_INPT   yLOG_info    ("s_fields 1", s_fields [1]);
       switch (s_verb [0]) {
       case 's' :
          DEBUG_INPT   yLOG_note    ("source program name");
-         strlcpy (my.source, s_fields [1], LEN_FIELD);
+         strlcpy (my.r_source, s_fields [1], LEN_HUND);
          break;
       case 'l' :
          DEBUG_INPT   yLOG_note    ("source program report/label");
-         strlcpy (my.report, s_fields [1], LEN_FIELD);
+         strlcpy (my.r_report, s_fields [1], LEN_HUND);
          break;
       case 'f' :
          DEBUG_INPT   yLOG_note    ("display format");
@@ -340,7 +495,7 @@ FILE_node          (int a_level, char *a_name, long a_value, int a_count, char *
       return rce;
    }
    /*---(append)-------------------------*/
-   x_curr = NODE_append (s_nodes [a_level - 1]);
+   NODE_create (&x_curr, s_nodes [a_level - 1]);
    /*---(add values)---------------------*/
    strlcpy (x_curr->label, a_name,  12);
    strlcpy (x_curr->name , a_name,  50);
@@ -382,8 +537,8 @@ FILE_main          (void)
    int         x_level     =    0;          /* node level                     */
    long        x_value     =    0;          /* node level                     */
    int         x_count     =    0;          /* node level                     */
-   char        x_name      [LEN_FIELD];
-   char        x_desc      [LEN_FIELD];
+   char        x_name      [LEN_HUND];
+   char        x_desc      [LEN_HUND];
    /*---(header)-------------------------*/
    DEBUG_INPT   yLOG_enter   (__FUNCTION__);
    /*---(prepare)------------------------*/
@@ -418,35 +573,35 @@ FILE_main          (void)
             continue;
          }
          x_level = atoi (s_fields [1]);
-         strlcpy  (x_name, s_fields [2], LEN_FIELD);
+         strlcpy  (x_name, s_fields [2], LEN_HUND);
          strltrim (x_name, ySTR_BOTH, 200);
          x_value = atol (s_fields [3]);
          x_count = atoi (s_fields [4]);
-         strlcpy  (x_desc, s_fields [5], LEN_FIELD);
+         strlcpy  (x_desc, s_fields [5], LEN_HUND);
          strltrim (x_desc, ySTR_BOTH, 200);
          FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       case 'S' :
-         strlcpy  (x_name, s_fields [0], LEN_FIELD);
+         strlcpy  (x_name, s_fields [0], LEN_HUND);
          strltrim (x_name, ySTR_TAIL, 200);
          x_len = strlen (x_name);
          strltrim (x_name, ySTR_HEAD, 200);
          x_level = 1 + (x_len - strlen (x_name)) / 3;
          x_value = atol (s_fields [1]);
          x_count = atoi (s_fields [2]);
-         strlcpy  (x_desc, s_fields [3], LEN_FIELD);
+         strlcpy  (x_desc, s_fields [3], LEN_HUND);
          strltrim (x_desc, ySTR_BOTH, 200);
          FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
       default  :
-         strlcpy  (x_name, s_fields [0], LEN_FIELD);
+         strlcpy  (x_name, s_fields [0], LEN_HUND);
          strltrim (x_name, ySTR_TAIL, 200);
          x_len = strlen (x_name);
          strltrim (x_name, ySTR_HEAD, 200);
          x_level = 1 + (x_len - strlen (x_name)) / 3;
          x_value = atol (s_fields [1]);
          x_count = atoi (s_fields [2]);
-         strlcpy  (x_desc, s_fields [3], LEN_FIELD);
+         strlcpy  (x_desc, s_fields [3], LEN_HUND);
          strltrim (x_desc, ySTR_BOTH, 200);
          FILE_node (x_level, x_name, x_value, x_count, x_desc);
          break;
@@ -539,7 +694,7 @@ FILE_read          (
          continue;
       }
       /*---(create node)-----------------*/
-      x_curr = NODE_append (a_owner);
+      NODE_create (&x_curr, a_owner);
       if (x_curr == NULL) {
          DEBUG_INPT   yLOG_info    ("x_curr is NULL" ,  "could not create a new node");
          DEBUG_INPT   yLOG_exit    (__FUNCTION__);
@@ -607,6 +762,24 @@ STDIN__unit             (char *a_question, int n)
    }
    else if (strcmp (a_question, "field"         ) == 0) {
       snprintf (unit_answer, LEN_FULL, "STDIN field (%2d) : %2d[%.50s]", n, strlen (s_fields [n]), s_fields [n]);
+   }
+   else if (strcmp (a_question, "source"        ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN source     : [%.79s]", my.r_source);
+   }
+   else if (strcmp (a_question, "report"        ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN report     : [%.79s]", my.r_report);
+   }
+   else if (strcmp (a_question, "one-line"      ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN one-line   : [%.79s]", my.r_oneline);
+   }
+   else if (strcmp (a_question, "option"        ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN option     : [%.79s]", my.r_option);
+   }
+   else if (strcmp (a_question, "timestamp"     ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN timestamp  : [%.79s]", my.r_timestamp);
+   }
+   else if (strcmp (a_question, "format"        ) == 0) {
+      snprintf (unit_answer, LEN_FULL, "STDIN format     : [%.79s]", my.r_format);
    }
    /*---(complete)-----------------------*/
    DEBUG_CONF   yLOG_exit    (__FUNCTION__);
